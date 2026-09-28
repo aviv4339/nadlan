@@ -8,9 +8,12 @@
       [--neighborhood "כוכב הצפון" | --streets "דיזנגוף,בן יהודה" | --parcels "6963:14,7091"]
       [--min-rooms 4] [--max-rooms N] [--min-amount 2000000] [--max-amount N]
       [--date-from 2023-01-01] [--date-to YYYY-MM-DD] [--nature "דירה בבית קומות" ...]
-      [--title T] [--out report.html] [--json data.json] [--max-deals 5000] [--no-benchmark] [--open]
+      [--title T] [--slug tel-aviv-kochav-hatzafon] [--out path.html] [--json data.json]
+      [--max-deals 5000] [--no-benchmark] [--open]
 
 No area flag = the whole settlement. Exit code 2 = unknown/ambiguous place; candidates on stderr.
+The report is written to ./reports/<slug>-<YYYY-MM-DD>.html under the current directory (a "-2", "-3" …
+suffix instead of overwriting); --slug sets the name part, --out an explicit path.
 """
 import argparse, collections, concurrent.futures as cf, datetime as dt, json, pathlib, re, sys
 import urllib.request, webbrowser
@@ -353,6 +356,129 @@ def shape_deal(d, info):
     }
 
 
+# ---------- output naming: ./reports/<city>-<area>-<YYYY-MM-DD>.html ----------
+
+# Common English names for the largest cities (keys compared with norm(), so spelling variants match).
+CITY_EN = {norm(k): v for k, v in {
+    "תל אביב -יפו": "tel-aviv", "ירושלים": "jerusalem", "חיפה": "haifa", "ראשון לציון": "rishon-lezion",
+    "פתח תקווה": "petah-tikva", "אשדוד": "ashdod", "נתניה": "netanya", "באר שבע": "beer-sheva",
+    "בני ברק": "bnei-brak", "חולון": "holon", "רמת גן": "ramat-gan", "אשקלון": "ashkelon", "רחובות": "rehovot",
+    "בת ים": "bat-yam", "בית שמש": "beit-shemesh", "כפר סבא": "kfar-saba", "הרצלייה": "herzliya",
+    "חדרה": "hadera", "מודיעין-מכבים-רעות": "modiin", "נצרת": "nazareth", "לוד": "lod", "רמלה": "ramla",
+    "רעננה": "raanana", "ראש העין": "rosh-haayin", "הוד השרון": "hod-hasharon", "גבעתיים": "givatayim",
+    "קריית אתא": "kiryat-ata", "נהריה": "nahariya", "קריית גת": "kiryat-gat", "אילת": "eilat",
+    "עפולה": "afula", "נס ציונה": "ness-ziona", "יבנה": "yavne", "רמת השרון": "ramat-hasharon",
+    "אור יהודה": "or-yehuda", "קריית מוצקין": "kiryat-motzkin", "קריית ביאליק": "kiryat-bialik",
+    "קריית ים": "kiryat-yam", "זכרון יעקב": "zichron-yaakov", "טבריה": "tiberias", "צפת": "safed",
+    "יהוד": "yehud", "גבעת שמואל": "givat-shmuel", "אלעד": "elad", "מודיעין עילית": "modiin-illit",
+    "ביתר עילית": "beitar-illit", "באר יעקב": "beer-yaakov", "כרמיאל": "karmiel", "דימונה": "dimona",
+    "שדרות": "sderot", "נתיבות": "netivot", "אופקים": "ofakim", "ערד": "arad", "קריית שמונה": "kiryat-shmona",
+    "מעלה אדומים": "maale-adumim", "אריאל": "ariel", "קיסריה": "caesarea", "אום אל-פחם": "umm-al-fahm",
+}.items()}
+# Frequent words in neighborhood and street names that the letter-level transliteration gets wrong.
+WORD_EN = {norm(k): v for k, v in {
+    "תל": "tel", "יפו": "yafo", "רמת": "ramat", "נווה": "neve", "קריית": "kiryat", "גבעת": "givat",
+    "הר": "har", "בית": "beit", "כפר": "kfar", "גן": "gan", "גני": "ganei", "עין": "ein", "מעלה": "maale",
+    "ראש": "rosh", "בן": "ben", "בת": "bat", "יהודה": "yehuda", "שכונה": "shchuna", "שיכון": "shikun",
+    "מרכז": "merkaz", "העיר": "hair", "החדש": "hachadash", "החדשה": "hachadasha", "הישן": "hayashan",
+    "הישנה": "hayeshana", "החלק": "hachelek", "הצפוני": "hatzfoni", "הדרומי": "hadromi", "המזרחי": "hamizrachi",
+    "המערבי": "hamaaravi", "צפון": "tzafon", "דרום": "darom", "מזרח": "mizrach", "מערב": "maarav",
+    "עמק": "emek", "המושבה": "hamoshava", "הגרמנית": "hagermanit", "פארק": "park", "אזור": "ezor",
+    "תעשייה": "taasiya", "רובע": "rova", "שדרות": "sderot", "רחוב": "rehov", "פיתוח": "pituach",
+}.items()}
+_CONS = {"ב": "v", "ג": "g", "ד": "d", "ה": "h", "ז": "z", "ח": "ch", "ט": "t", "כ": "ch", "ך": "ch", "ל": "l",
+         "מ": "m", "ם": "m", "נ": "n", "ן": "n", "ס": "s", "פ": "f", "ף": "f", "צ": "tz", "ץ": "tz", "ק": "k",
+         "ר": "r", "ש": "sh", "ת": "t"}
+_HARD = {"ב": "b", "כ": "k", "פ": "p"}  # word-initial (dagesh) sounds
+_GERESH_SOUND = {"ג": "j", "ז": "zh", "צ": "ch"}
+GERESH = "׳'`"
+
+
+def translit_word(w):
+    """Best-effort Latin reading of one unvocalized Hebrew word, for file names only.
+    ו/י act as vowels mid-word, an 'a' is inserted between consonant clusters."""
+    if w.isdigit():
+        return w
+    if norm(w) in WORD_EN or norm(w) in CITY_EN:
+        return WORD_EN.get(norm(w)) or CITY_EN[norm(w)]
+    seq = []  # (letter, followed_by_geresh)
+    for ch in w:
+        if ch in GERESH and seq:
+            seq[-1] = (seq[-1][0], True)
+        elif "\u05d0" <= ch <= "\u05ea":
+            seq.append((ch, False))
+    if len(seq) == 1:  # abbreviation such as ג׳
+        return _HARD.get(seq[0][0]) or _CONS.get(seq[0][0], "")
+    toks, i = [], 0  # (text, is_vowel)
+    while i < len(seq):
+        c, geresh = seq[i]
+        nxt = seq[i + 1][0] if i + 1 < len(seq) else ""
+        first, last = i == 0, i == len(seq) - 1
+        if geresh and c in _GERESH_SOUND:
+            toks.append((_GERESH_SOUND[c], False))
+        elif c == "ו":
+            if nxt == "ו":
+                toks.append(("v", False))
+                i += 1
+            else:
+                toks.append(("v", False) if first else ("o", True))
+        elif c == "י":
+            if nxt == "י" and not first:
+                toks.append(("y", False))
+                i += 1
+            else:
+                toks.append(("y", False) if first else ("i", True))
+        elif c in "אע":
+            if first:
+                toks.append(("", True) if nxt in "וי" else ("a", True))
+            elif toks and not toks[-1][1] and nxt not in "וי":
+                toks.append(("a", True))
+        elif c == "ה" and last:
+            toks.append(("", True) if toks and toks[-1] == ("a", True) else ("a", True))
+        else:
+            toks.append(((_HARD.get(c) if first else None) or _CONS.get(c, ""), False))
+        i += 1
+    out, prev_cons = "", False
+    for t, vowel in toks:
+        if t and not vowel and prev_cons:
+            out += "a"
+        out += t
+        if t or vowel:
+            prev_cons = not vowel
+    return out
+
+
+def latin(text):
+    words = re.split(r"[\s\-–—_/,.:()\"״]+", NBR_PREFIX.sub("", text or ""))
+    return "-".join(filter(None, (translit_word(w) for w in words)))
+
+
+def slugify(parts):
+    s = re.sub(r"[^a-z0-9]+", "-", "-".join(p for p in parts if p).lower()).strip("-")
+    return s[:80].strip("-") or "report"
+
+
+def default_slug(settlement, mode, area_name=None, streets=(), parcels=()):
+    parts = [CITY_EN.get(norm(settlement)) or latin(settlement)]
+    if mode == "neighborhood":
+        parts.append(latin(area_name))
+    elif mode == "streets":
+        parts += [latin(s) for s in list(streets)[:3]]
+    elif mode == "parcels":
+        parts.append("gush-" + "-".join(f"{g}" + (f"-{h}" if h is not None else "") for g, h in list(parcels)[:4]))
+    return slugify(parts)
+
+
+def report_path(slug, day, root=None):
+    """<root or cwd>/reports/<slug>-<day>.html; never overwrites an existing report."""
+    folder = pathlib.Path(root or pathlib.Path.cwd()) / "reports"
+    folder.mkdir(parents=True, exist_ok=True)
+    path, n = folder / f"{slug}-{day}.html", 2
+    while path.exists():
+        path, n = folder / f"{slug}-{day}-{n}.html", n + 1
+    return path
+
+
 # ---------- report assembly ----------
 
 def fmt_ils(v):
@@ -549,8 +675,14 @@ def build(a):
         "parcels": {k: {"lat": v["lat"], "lon": v["lon"], "dwellings": v["dwellings"], "area_m2": v["area_m2"],
                         "geom": v["geom"]} for k, v in info.items()},
     }
-    slug = re.sub(r"[^\w]+", "-", label).strip("-")
-    out = pathlib.Path(a.out or f"nadlan-report-{slug}-{today.replace('-', '')}.html")
+    if a.out:
+        out = pathlib.Path(a.out)
+        out.parent.mkdir(parents=True, exist_ok=True)
+    else:
+        streets = [s.strip() for s in (a.streets or "").split(",") if s.strip()]
+        slug = slugify([a.slug]) if a.slug else default_slug(
+            settlement, area["mode"], area["name"], streets, parse_parcels(a.parcels) if a.parcels else ())
+        out = report_path(slug, today)
     render(payload, out)
     if a.json:
         pathlib.Path(a.json).write_text(json.dumps(payload, ensure_ascii=False, indent=1), encoding="utf-8")
@@ -581,7 +713,8 @@ def main():
     b.add_argument("--date-to")
     b.add_argument("--nature", action="append", default=[])
     b.add_argument("--title")
-    b.add_argument("--out")
+    b.add_argument("--slug", help="file-name part, e.g. tel-aviv-kochav-hatzafon (default: derived from city + area)")
+    b.add_argument("--out", help="explicit output path (default: ./reports/<slug>-<YYYY-MM-DD>.html)")
     b.add_argument("--json")
     b.add_argument("--max-deals", type=int, default=5000)
     b.add_argument("--no-benchmark", action="store_true")

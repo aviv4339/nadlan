@@ -55,17 +55,20 @@ $C tools deals                                   # live tool list + input schema
 | "priced above / below ₪X" | `--min-amount X` / `--max-amount X` (inclusive) |
 | "from 2024 until today" | `--date-from 2024-01-01` (omit `--date-to`) |
 | "apartments only", "cottages" … | `--nature "<exact type>"`, repeatable; exact strings from `list_deal_types` (list below). Default: all types — the report breaks them down |
-| title / output file | `--title`, `--out file.html` (default `./nadlan-report-<area>-<date>.html`) |
+| title / file name | `--title`; `--slug <city>-<area>` in English (see below); `--out path.html` only if the user asks for a specific path |
 No area flag = the whole settlement (fetch capped by `--max-deals`, default 5000; the cap is reported).
 
 ### 2. Resolve the area, then build
 ```bash
 R="python3 $SKILL/scripts/over_report.py"
 $R areas --city "תל אביב" --q "הצפון"      # list known neighborhoods: name, source (polygon|addresses), size
-$R build --city "תל אביב" --neighborhood "כוכב הצפון" --min-rooms 4 --min-amount 2000000 --date-from 2023-01-01 --open
+$R build --city "תל אביב" --neighborhood "כוכב הצפון" --min-rooms 4 --min-amount 2000000 --date-from 2023-01-01 \
+    --slug tel-aviv-kochav-hatzafon --open
 ```
+- **Where the report goes:** `reports/<slug>-<YYYY-MM-DD>.html` under the **current working directory**, created if missing (e.g. `my_working_dir/reports/tel-aviv-kochav-hatzafon-2026-09-28.html`). Run the command from the user's working directory, not from `$SKILL`. An existing file is never overwritten; a `-2`, `-3` … suffix is added.
+- **Always pass `--slug`:** a readable English transliteration, city then area, lowercase and hyphenated: `tel-aviv-kochav-hatzafon`, `jerusalem-rehavia`, `tel-aviv-dizengoff-ben-yehuda`, `jerusalem-gush-30026-34`. Without it the script derives one from built-in English city names plus a rough letter-by-letter transliteration.
 - Exit 2 = unknown/ambiguous place, with candidates printed on stderr → pick the exact name, or ask the user when several fit (e.g. "הצפון הישן" has two polygons: "החלק הצפוני"/"החלק הדרומי").
-- stderr shows `area: … → N parcels` and `deals: N`; stdout prints the report path. `--json data.json` also dumps the payload for further analysis.
+- stderr shows `area: … → N parcels` and `deals: N`; stdout prints the report's absolute path (tell the user). `--json data.json` also dumps the payload for further analysis.
 - Build time: ~30 s for a neighborhood when the server is quiet; several minutes under load or for wide areas (three concurrent city builds took ~200 s each).
 
 ### 3. How the area is resolved

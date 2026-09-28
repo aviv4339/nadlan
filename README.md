@@ -60,7 +60,7 @@ python3 $S/over_report.py build --city "תל אביב" --neighborhood "הצפו�
     --min-rooms 4 --date-from 2024-01-01 --open
 ```
 
-The report is written to `./nadlan-report-<area>-<date>.html`. A neighborhood usually takes about 30 seconds, and longer when the server is busy.
+The report is saved in a `reports/` folder under the directory you run it from, named `<city>-<area>-<date>.html`, for example `reports/tel-aviv-hatzafon-hayashan-hachelek-hatzfoni-2026-09-28.html`. The folder is created if it doesn't exist, and an existing report is never overwritten: a `-2`, `-3` … suffix is added instead. A neighborhood usually takes about 30 seconds, and longer when the server is busy.
 
 ## Install the skill in your agent
 
@@ -271,7 +271,9 @@ python3 $S/over_report.py build --city "רמת גן" --neighborhood "מרום נ
 | `--min-amount` `--max-amount` | Inclusive reported price range, in ₪. |
 | `--date-from` `--date-to` | `YYYY-MM-DD`. Leave out `--date-to` for "until today". |
 | `--nature` | Deal type, repeatable, as exact strings: `דירה בבית קומות`, `דירת גן`, `דירת גג`, `קוטג' חד משפחתי`, … (47 in total). Default is every type, broken down in the report. |
-| `--title` `--out` `--json` | Report title, output path, and an optional JSON payload dump. |
+| `--slug` | File-name part, e.g. `tel-aviv-kochav-hatzafon`. By default it's derived from the city's English name plus a transliteration of the area. Agents pass a clean one. |
+| `--out` | Explicit output path, instead of `./reports/<slug>-<date>.html`. |
+| `--title` `--json` | Report title, and an optional JSON payload dump. |
 | `--no-benchmark` `--open` | Skip the city-wide comparison; open the report when done. |
 
 Exit code `2` means the place is unknown or ambiguous, and the candidates are printed to stderr.

@@ -95,5 +95,23 @@ class NetworkErrors(unittest.TestCase):
         self.assertIn("timed out", str(ctx.exception))
 
 
+class OutputNaming(unittest.TestCase):
+    def test_default_slug_is_latin_city_then_area(self):
+        self.assertEqual(over_report.default_slug("תל אביב -יפו", "neighborhood", "כוכב הצפון"), "tel-aviv-kochav-hatzafon")
+        self.assertEqual(over_report.default_slug("ירושלים", "parcels", parcels=[(30026, 34), (30027, None)]),
+                         "jerusalem-gush-30026-34-30027")
+
+    def test_explicit_slug_is_sanitized(self):
+        self.assertEqual(over_report.slugify(["Tel Aviv / Kochav HaTzafon!"]), "tel-aviv-kochav-hatzafon")
+
+    def test_reports_folder_is_created_and_never_overwritten(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            first = over_report.report_path("haifa", "2026-09-28", root=tmp)
+            self.assertEqual(str(first), f"{tmp}/reports/haifa-2026-09-28.html")
+            first.write_text("x")
+            self.assertEqual(over_report.report_path("haifa", "2026-09-28", root=tmp).name, "haifa-2026-09-28-2.html")
+
+
 if __name__ == "__main__":
     unittest.main()
