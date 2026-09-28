@@ -77,7 +77,8 @@ $R build --city "תל אביב" --neighborhood "כוכב הצפון" --min-rooms
 ### 3. How the area is resolved
 1. **Neighborhood polygon** — Survey of Israel layer `שכונות — המרכז למיפוי ישראל` (govmap; ~3.2k neighborhoods in 175 settlements; every polygon stored twice as two snapshots, the latest is used). Parcels whose inner point (`ST_PointOnSurface`) falls inside it.
 2. Otherwise the **address-list label** (`neighbourhood` column, 88 settlements): the parcels containing the addresses carrying that label.
-3. `--streets`: the parcels containing those streets' addresses.
+3. `--streets`: the parcels holding those streets' addresses (address list) plus every parcel with a gazetteer unit on them in the same city, so the whole street is covered. Only flats addressed on the streets are kept (unit street, any linked address, or unknown). A report note counts deals on the same parcels that belong to other streets, e.g. a big neighboring project. Mention them to the user, and offer `--parcels` if they want them included.
+- A place name can be a landmark, a neighborhood or a street; landmarks and streets often share names. Check with `suggest_streets` (and any map link the user gave) before choosing between `--neighborhood` and `--streets`.
 Deals are fetched with `search_deals` by gush (or gush+helka when a gush has ≤3 area parcels) with the filters applied server-side, then kept only for area parcels.
 
 ### 4. What the report shows (all interactive, cross-filtering)

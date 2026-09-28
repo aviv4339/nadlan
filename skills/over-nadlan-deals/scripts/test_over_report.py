@@ -113,6 +113,17 @@ class OutputNaming(unittest.TestCase):
             self.assertEqual(over_report.report_path("haifa", "2026-09-28", root=tmp).name, "haifa-2026-09-28-2.html")
 
 
+class StreetsMode(unittest.TestCase):
+    def test_only_flats_addressed_on_the_street_are_kept(self):
+        deals = [{"street": "הרצל", "addresses": []},
+                 {"street": "ויצמן", "addresses": []},                     # neighbor project on a shared parcel
+                 {"street": "הגפן", "addresses": ["הגפן 3", "הרצל 12"]},  # corner building
+                 {"street": "", "addresses": []}]                          # unknown street: keep
+        kept, other = over_report.split_by_street(deals, ["הרצל"])
+        self.assertEqual([d["street"] for d in kept], ["הרצל", "הגפן", ""])
+        self.assertEqual([d["street"] for d in other], ["ויצמן"])
+
+
 class Versioning(unittest.TestCase):
     def test_version_sources_agree(self):
         import pathlib

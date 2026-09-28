@@ -7,6 +7,12 @@ change behavior; the entry will say so.
 
 ## [Unreleased]
 
+### Fixed
+- `--streets` now covers the whole street: parcels come from the address list **and** the asset gazetteer (same
+  city only), so buildings without address coordinates are no longer missed.
+- `--streets` keeps only flats addressed on the requested streets. Parcels touching a street can hold large
+  neighboring projects addressed elsewhere; those deals are left out and counted in a report note.
+
 ## [0.2.0] - 2026-09-28
 
 ### Added

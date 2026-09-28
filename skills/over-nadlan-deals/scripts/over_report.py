@@ -197,6 +197,25 @@ def area_addresses(T, city_norms, where):
     return parcels, geo, streets
 
 
+def gazetteer_parcels(T, settlement_code, names):
+    """(gush, helka) of every parcel with a gazetteer unit on one of `names` in this settlement."""
+    if not settlement_code:
+        return []
+    codes = ",".join(lit(c) for c in (str(settlement_code), f"{settlement_code}.0"))
+    rows = sql_all(f"""SELECT DISTINCT split_part("GushNum", '.', 1)::int gush, split_part("ParcelNum", '.', 1)::int helka
+        FROM {T['gazetteer']} WHERE "SettlmentID" IN ({codes})
+        AND {nsql('"StreetNameHeb"')} IN ({','.join(lit(norm(s)) for s in names)})
+        AND "GushNum" ~ '^[0-9]+(\\.0*)?$' AND "ParcelNum" ~ '^[0-9]+(\\.0*)?$'""")
+    return [(r["gush"], r["helka"]) for r in rows]
+
+
+def parcels_at(T, pairs):
+    """Inner point of the given (gush, helka) parcels, in the same row shape as the area resolvers."""
+    vals = ",".join(f"({lit(g)},{lit(h)})" for g, h in pairs)
+    return sql_all(f"WITH k(g, h) AS (VALUES {vals}) "
+                   + _parcels_select(T, 'JOIN k ON p."GUSH_NUM" = k.g AND p."PARCEL" = k.h'))
+
+
 def parse_parcels(spec):
     out = []
     for tok in re.split(r"[,\s]+", spec.strip()):
@@ -332,6 +351,15 @@ def gush_outlines(T, gushim, max_gushim=40):
 
 def street_of(address):
     return re.sub(r"\s+\d+\s*[א-ת]?\s*$", "", address).strip()
+
+
+def split_by_street(deals, names):
+    """(on the streets, elsewhere). A deal stays when its unit's street, any linked address, or an unknown
+    street puts it on one of `names`; parcels touching a street also hold flats addressed on other streets."""
+    want = {norm(s) for s in names}
+    on = lambda d: (not d["street"] or norm(d["street"]) in want  # noqa: E731
+                    or any(norm(street_of(x)) in want for x in d.get("addresses") or []))
+    return [d for d in deals if on(d)], [d for d in deals if not on(d)]
 
 
 def shape_deal(d, info):
@@ -573,9 +601,15 @@ def build(a):
         names = [s.strip() for s in a.streets.split(",") if s.strip()]
         where = f"{nsql('street')} IN ({','.join(lit(norm(s)) for s in names)})"
         parcels, geo, streets = area_addresses(T, city_norms, where)
+        # address points miss buildings without coordinates; the gazetteer lists every parcel with a unit on the street
+        have = {(p["gush"], p["helka"]) for p in parcels}
+        extra = [k for k in gazetteer_parcels(T, S.get("settlement_code"), names) if k not in have]
+        if extra:
+            parcels += parcels_at(T, extra)
         area.update(mode="streets", name="רחובות: " + ", ".join(names), polygon=geo, streets=streets,
-                    src="כתובות הרחובות ברשימת הכתובות הארצית, והחלקות שהן יושבות בהן")
-        log(f"area: streets {names} → {len(parcels)} parcels")
+                    src="החלקות של כתובות הרחובות (רשימת הכתובות הארצית) ושל הנכסים הרשומים ברחובות בגזטיר הנכסים; "
+                        "נכללות רק עסקאות בדירות שכתובתן ברחובות אלה")
+        log(f"area: streets {names} → {len(parcels)} parcels ({len(extra)} from the gazetteer only)")
     elif a.parcels:
         spec = parse_parcels(a.parcels)
         parcels = []
@@ -631,8 +665,14 @@ def build(a):
                    key=lambda d: d["date"], reverse=True)
     for d in deals:
         d["street"] = canon.get(norm(d["street"]), d["street"])
+    if area["mode"] == "streets":
+        deals, other = split_by_street(deals, names)
+        if other:
+            top = collections.Counter(d["street"] for d in other).most_common(4)
+            notes.append(f"{len(other)} deals on the same parcels are addressed on other streets "
+                         f"({', '.join(f'{s}: {n}' for s, n in top)}) and were left out")
     area["streets"] = sorted(({"street": canon[k], **v} for k, v in st.items()), key=lambda r: -(r["units"] + r["addresses"]))
-    area["dwellings"] = dwellings if area_pairs else None
+    area["dwellings"] = dwellings if area_pairs and area["mode"] != "streets" else None  # street parcels hold other streets' flats too
     area["parcels"] = [[p["gush"], p["helka"], p["lat"], p["lon"]] for p in parcels]
     area["n_parcels"] = len(parcels) or len({(d["gush"], d["helka"]) for d in deals})
     area["gushim"] = sorted({p["gush"] for p in parcels} or {d["gush"] for d in deals})
