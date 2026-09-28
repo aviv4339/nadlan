@@ -1,0 +1,913 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>__TITLE__</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<!--__LIBS__-->
+<style>
+:root{
+  --bg:#f4f6fb; --card:#fff; --ink:#0f172a; --ink2:#334155; --muted:#64748b; --line:#e5e9f2;
+  --brand:#4f46e5; --brand-soft:#eef2ff; --teal:#0e7490; --amber:#f59e0b;
+  --shadow:0 1px 2px rgba(15,23,42,.05),0 10px 30px -12px rgba(15,23,42,.18); --r:18px;
+  --font:Heebo,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:var(--font);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
+.wrap{max-width:1360px;margin:0 auto;padding:0 28px}
+button,input,select{font:inherit;color:inherit}
+a{color:var(--brand)}
+
+/* hero */
+.hero{position:relative;overflow:hidden;color:#fff;padding:44px 0 84px;
+  background:radial-gradient(900px 380px at 88% -10%,rgba(56,189,248,.45),transparent 60%),
+             radial-gradient(700px 320px at 5% 120%,rgba(16,185,129,.35),transparent 60%),
+             linear-gradient(135deg,#1e1b4b 0%,#312e81 45%,#0e7490 100%)}
+.hero:after{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.09) 1px,transparent 1px);background-size:22px 22px;pointer-events:none}
+.hero .wrap{position:relative;z-index:1}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:13px;letter-spacing:.03em;opacity:.9;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);padding:5px 12px;border-radius:999px}
+.hero h1{font-size:clamp(26px,3.4vw,40px);font-weight:800;margin:14px 0 16px;letter-spacing:-.01em}
+.pchips{display:flex;flex-wrap:wrap;gap:8px}
+.pchips span{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.22);padding:7px 14px;border-radius:999px;font-size:14px;font-weight:500;backdrop-filter:blur(4px)}
+.metaline{margin-top:16px;font-size:13px;opacity:.85;display:flex;flex-wrap:wrap;gap:6px 18px}
+
+/* filter bar */
+.filters{position:sticky;top:10px;z-index:1200;margin-top:-56px;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);
+  border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:14px 16px}
+.frow{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.search{flex:1 1 240px;position:relative}
+.search input{width:100%;padding:10px 38px 10px 12px;border:1px solid var(--line);border-radius:12px;background:#f8fafc;outline:none}
+.search input:focus{border-color:var(--brand);background:#fff;box-shadow:0 0 0 3px var(--brand-soft)}
+.search:before{content:"⌕";position:absolute;right:13px;top:50%;transform:translateY(-52%);color:var(--muted);font-size:18px}
+.fld{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)}
+.fld input{padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;width:132px}
+.fld input[type=number]{width:120px;direction:ltr;text-align:right}
+.dd{position:relative}
+.dd-btn,.btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 12px;cursor:pointer;white-space:nowrap;transition:.15s}
+.dd-btn:hover,.btn:hover{border-color:#c7d2fe;background:var(--brand-soft)}
+.dd-btn.on{border-color:var(--brand);background:var(--brand-soft);color:var(--brand);font-weight:600}
+.dd-btn b{display:inline-grid;place-items:center;min-width:20px;height:20px;border-radius:999px;background:var(--brand);color:#fff;font-size:12px;margin-inline-start:4px}
+.dd-pop{position:absolute;top:calc(100% + 6px);right:0;width:290px;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 20px 50px -12px rgba(15,23,42,.35);padding:10px;z-index:1300}
+.dd-q{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px}
+.dd-list{max-height:300px;overflow:auto}
+.dd-item{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:8px;cursor:pointer;font-size:14px}
+.dd-item:hover{background:#f8fafc}
+.dd-item span{flex:1}
+.dd-item em{font-style:normal;color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}
+.dd-foot{display:flex;justify-content:space-between;border-top:1px solid var(--line);margin-top:8px;padding-top:8px}
+.linkbtn{background:none;border:0;color:var(--brand);cursor:pointer;padding:4px}
+.btn.reset{color:#b91c1c}
+.count{margin-inline-start:auto;font-size:13px;color:var(--muted);font-weight:500}
+.count b{color:var(--ink)}
+.achips{display:flex;flex-wrap:wrap;gap:6px}
+.achips:not(:empty){margin-top:10px}
+.achip{display:inline-flex;align-items:center;gap:6px;background:var(--brand-soft);color:var(--brand);border:1px solid #c7d2fe;border-radius:999px;padding:4px 6px 4px 12px;font-size:13px;font-weight:500}
+.achip button{border:0;background:#fff;color:var(--brand);width:20px;height:20px;border-radius:999px;cursor:pointer;line-height:1}
+
+/* kpis */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin:18px 0}
+.kpi{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);padding:16px 18px;position:relative;overflow:hidden}
+.kpi:before{content:"";position:absolute;inset-inline-start:0;top:0;bottom:0;width:4px;background:var(--c,var(--brand))}
+.kpi h4{margin:0;font-size:13px;color:var(--muted);font-weight:500}
+.kpi .v{font-size:28px;font-weight:800;margin:6px 0 2px;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.kpi .s{font-size:12.5px;color:var(--muted)}
+
+/* grid + cards */
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.span2{grid-column:1/-1}
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);padding:18px 18px 12px;min-width:0}
+.card-h{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:6px}
+.card h3{margin:0;font-size:16.5px;font-weight:700}
+.card .sub{font-size:12.5px;color:var(--muted);margin:2px 0 8px}
+.card-h .tools{margin-inline-start:auto;display:flex;gap:8px;flex-wrap:wrap}
+.seg{display:inline-flex;background:#f1f5f9;border-radius:10px;padding:3px}
+.seg button{border:0;background:none;padding:5px 11px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--ink2)}
+.seg button.on{background:#fff;box-shadow:0 1px 3px rgba(15,23,42,.15);color:var(--brand);font-weight:600}
+.chart{height:330px;width:100%}
+.chart.tall{height:420px}
+.hint{font-size:12px;color:var(--muted)}
+#map{height:640px;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:#e5e7eb}
+#map-card:fullscreen{padding:16px;background:#fff;overflow:auto}
+#map-card:fullscreen #map{height:calc(100vh - 120px)}
+.legend{background:rgba(255,255,255,.95);padding:9px 11px;border-radius:12px;box-shadow:0 4px 14px rgba(15,23,42,.18);font:12px var(--font);direction:rtl;min-width:190px}
+.legend .bar{height:10px;width:170px;border-radius:6px;background:linear-gradient(90deg,#2563eb,#06b6d4,#22c55e,#facc15,#f97316,#dc2626);margin:5px 0 3px}
+.legend .ends{display:flex;justify-content:space-between;color:var(--muted);direction:ltr}
+.legend .row{display:flex;align-items:center;gap:7px;margin-top:5px;color:var(--ink2)}
+.legend .sw{width:16px;height:11px;border-radius:3px;display:inline-block;flex:none}
+.leaflet-container{font-family:var(--font)}
+.leaflet-popup-content-wrapper{border-radius:14px;box-shadow:0 18px 40px -10px rgba(15,23,42,.35)}
+.leaflet-popup-content{direction:rtl;text-align:right;min-width:250px;margin:14px 16px;font-size:13px;line-height:1.5}
+.leaflet-control-layers{direction:rtl;text-align:right;font:13px var(--font);border-radius:12px !important}
+.leaflet-control-layers-toggle{background-image:none !important;display:grid !important;place-items:center;font-size:20px;text-decoration:none}
+.leaflet-control-layers-toggle:after{content:"🗺️"}
+.pop h5{margin:0 0 2px;font-size:15px}
+.pop .m{color:var(--muted);font-size:12px}
+.pop .price{font-size:23px;font-weight:800;margin:4px 0 2px;color:var(--ink)}
+.pop table.kv{width:100%;border-collapse:collapse;margin:6px 0;font-size:12.5px}
+.pop table.kv td{padding:3px 0;border:0;white-space:normal;vertical-align:top}
+.pop table.kv td:first-child{color:var(--muted);padding-inline-end:12px;white-space:nowrap}
+.pop ul.deals{max-height:190px;overflow:auto;margin:6px 0;padding:0;list-style:none}
+.pop ul.deals li{padding:5px 6px;border-radius:8px;cursor:pointer;display:flex;gap:7px;align-items:center;font-size:12.5px}
+.pop ul.deals li:hover{background:var(--brand-soft)}
+.pop .dot{width:10px;height:10px;border-radius:50%;flex:none;box-shadow:0 0 0 1.5px #fff,0 0 0 2.5px #cbd5e1}
+.pop .acts{display:flex;gap:12px;align-items:center;margin-top:8px}
+.pop button{border:0;background:var(--brand);color:#fff;border-radius:8px;padding:6px 11px;cursor:pointer;font:inherit;font-size:12.5px}
+.leaflet-tooltip.plabel,.leaflet-tooltip.glabel{background:transparent;border:0;box-shadow:none;padding:0}
+.leaflet-tooltip.plabel:before,.leaflet-tooltip.glabel:before{display:none}
+.leaflet-tooltip.plabel{color:#1e293b;font:600 10.5px var(--font);text-shadow:0 0 3px #fff,0 0 3px #fff,0 0 3px #fff}
+#map:not(.z17) .leaflet-tooltip.plabel{display:none}
+.leaflet-tooltip.glabel{background:rgba(30,27,75,.9);color:#fff;font:700 12px var(--font);padding:3px 9px;border-radius:8px}
+#map:not(.z14) .leaflet-tooltip.glabel{display:none}
+
+/* tables */
+.tbl-wrap{overflow:auto;max-height:600px;border:1px solid var(--line);border-radius:12px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{position:sticky;top:0;background:#f8fafc;color:var(--muted);font-weight:600;text-align:right;padding:10px 12px;white-space:nowrap;cursor:pointer;user-select:none;border-bottom:1px solid var(--line);z-index:1}
+th:hover{color:var(--ink)}
+th .ar{font-size:10px;margin-inline-start:4px;color:var(--brand)}
+td{padding:9px 12px;border-bottom:1px solid #f1f5f9;white-space:nowrap}
+tbody tr:hover td{background:#f8faff}
+tbody tr.clk{cursor:pointer}
+tbody tr.sel td{background:var(--brand-soft)}
+td.n{direction:ltr;text-align:right;font-variant-numeric:tabular-nums}
+td.addr{white-space:normal;min-width:180px}
+.approx{color:var(--amber);font-weight:700}
+.tag{display:inline-block;font-size:12px;padding:2px 8px;border-radius:999px;background:#f1f5f9;color:var(--ink2)}
+.share{display:flex;align-items:center;gap:8px}
+.share i{display:block;height:6px;border-radius:6px;background:linear-gradient(90deg,#818cf8,#4f46e5)}
+.rowbtn{border:0;background:none;cursor:pointer;font-size:15px;padding:0 4px}
+.pager{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 2px 4px;font-size:13px;color:var(--muted)}
+.pager .pg{display:flex;gap:6px}
+
+/* streets */
+.streets{display:flex;flex-wrap:wrap;gap:8px}
+.st{border:1px solid var(--line);background:#fff;border-radius:12px;padding:8px 12px;cursor:pointer;text-align:right;transition:.15s;display:flex;flex-direction:column;gap:2px;min-width:140px}
+.st:hover{border-color:#c7d2fe;transform:translateY(-1px)}
+.st.on{border-color:var(--brand);background:var(--brand-soft)}
+.st.zero{opacity:.55}
+.st b{font-size:14px}
+.st span{font-size:12px;color:var(--muted)}
+
+footer{margin:26px 0 40px;color:var(--ink2);font-size:13.5px;line-height:1.7}
+footer .card{padding:20px 24px}
+footer h3{margin-top:0}
+footer ul{margin:6px 0 0;padding-inline-start:20px}
+.notes{color:#b45309}
+.empty{display:grid;place-items:center;height:100%;color:var(--muted);font-size:14px}
+@media (max-width:980px){.grid{grid-template-columns:1fr}.wrap{padding:0 14px}.filters{top:0;border-radius:0 0 var(--r) var(--r)}}
+@media print{.filters{position:static}.hero{padding-bottom:40px}.filters{margin-top:12px}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow">📊 דוח עסקאות נדל״ן · מאגר מיסוי מקרקעין (רשות המסים)</span>
+    <h1 id="title"></h1>
+    <div class="pchips" id="pchips"></div>
+    <div class="metaline" id="metaline"></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="filters" id="filters" aria-label="סינון">
+    <div class="frow">
+      <div class="search"><input id="q" type="search" placeholder="חיפוש חופשי: רחוב, כתובת, גוש/חלקה, סוג נכס…" autocomplete="off"></div>
+      <label class="fld">מתאריך <input type="date" id="from"></label>
+      <label class="fld">עד <input type="date" id="to"></label>
+      <label class="fld">מחיר מ־ <input type="number" id="pmin" min="0" step="100000" placeholder="₪"></label>
+      <label class="fld">עד <input type="number" id="pmax" min="0" step="100000" placeholder="₪"></label>
+      <div class="dd" data-dim="rooms"></div>
+      <div class="dd" data-dim="nature"></div>
+      <div class="dd" data-dim="street"></div>
+      <div class="dd" data-dim="age"></div>
+      <div class="dd" data-dim="year"></div>
+      <button class="btn reset" id="reset" type="button">איפוס ⟲</button>
+      <span class="count" id="count"></span>
+    </div>
+    <div class="achips" id="achips"></div>
+  </nav>
+
+  <section class="kpis" id="kpis"></section>
+
+  <section class="grid">
+    <div class="card span2" id="map-card">
+      <div class="card-h"><h3>מפת גושים, חלקות ודירות שנמכרו</h3>
+        <div class="tools"><button class="btn" id="map-fit" type="button">⌖ התאם לאזור</button><button class="btn" id="map-full" type="button">⛶ מסך מלא</button></div>
+      </div>
+      <div class="sub">כל נקודה היא דירה שנמכרה ועומדת בתנאי החיפוש ובסינון הנוכחי, והיא ממוקמת בתוך החלקה שלה. הצבע מייצג ₪/מ״ר, ולחיצה על נקודה מציגה את פרטי הרכישה. חלקה מודגשת היא חלקה שיש בה עסקאות, ולחיצה עליה מציגה את כל העסקאות שבה. מספרי החלקות מופיעים בזום קרוב. בפינה אפשר לעבור לתצלום אוויר.</div>
+      <div id="map" dir="ltr"></div>
+    </div>
+    <div class="card span2">
+      <div class="card-h"><h3>עסקאות ומחיר לאורך זמן</h3>
+        <div class="tools">
+          <div class="seg" id="metric"><button data-v="price" class="on">חציון מחיר</button><button data-v="ppsqm">חציון ₪/מ״ר</button><button data-v="area">חציון שטח</button></div>
+          <div class="seg" id="gran"><button data-v="month">חודש</button><button data-v="quarter" class="on">רבעון</button><button data-v="year">שנה</button></div>
+        </div>
+      </div>
+      <div class="sub">עמודות: מספר עסקאות · קו: החציון בכל תקופה. לחיצה על עמודה מסננת לתקופה.</div>
+      <div class="chart tall" id="c-time"></div>
+    </div>
+    <div class="card"><h3>לפי סוג נכס</h3><div class="sub">לחיצה על פלח מוסיפה/מסירה סינון</div><div class="chart" id="c-nature"></div></div>
+    <div class="card"><h3>לפי מספר חדרים</h3><div class="sub">לחיצה על פלח מוסיפה/מסירה סינון</div><div class="chart" id="c-rooms"></div></div>
+    <div class="card"><h3>לפי רחוב</h3><div class="sub">מספר עסקאות; צבע כהה = חציון ₪/מ״ר גבוה יותר</div><div class="chart tall" id="c-street"></div></div>
+    <div class="card"><h3>חדשה / יד שנייה</h3><div class="sub">לפי שנת הבנייה מול שנת העסקה (עד שנה = חדשה)</div><div class="chart tall" id="c-age"></div></div>
+    <div class="card"><h3>שטח מול מחיר</h3><div class="sub">כל נקודה = עסקה; צבע לפי חדרים; לחיצה מסננת לחלקה</div><div class="chart" id="c-scatter"></div></div>
+    <div class="card"><h3>התפלגות מחירים</h3><div class="sub">לחיצה על עמודה מסננת לטווח המחיר</div><div class="chart" id="c-hist"></div></div>
+    <div class="card span2" id="bench-card">
+      <h3 id="bench-title">האזור מול העיר — חציון ₪/מ״ר לפי שנה</h3>
+      <div class="sub" id="bench-sub"></div>
+      <div class="chart" id="c-bench"></div>
+    </div>
+    <div class="card span2">
+      <div class="card-h"><h3>פילוח לפי קטגוריה</h3>
+        <div class="tools"><div class="seg" id="dim"></div></div>
+      </div>
+      <div class="sub">לחיצה על שורה מוסיפה/מסירה סינון. כל הערכים הם חציונים.</div>
+      <div class="tbl-wrap"><table id="t-break"></table></div>
+    </div>
+    <div class="card span2" id="deals-card">
+      <div class="card-h"><h3>העסקאות</h3>
+        <div class="tools"><button class="btn" id="csv" type="button">⬇ ייצוא CSV</button></div>
+      </div>
+      <div class="sub">≈ = רחוב משוער (כתובת קרובה, לא משויכת ישירות לחלקה). 📍 מציג במפה, ↗ פותח את עמוד הנכס בנדל״ן לעם.</div>
+      <div class="tbl-wrap"><table id="t-deals"></table></div>
+      <div class="pager" id="pager"></div>
+    </div>
+    <div class="card span2" id="streets-card">
+      <h3>רחובות באזור</h3>
+      <div class="sub" id="streets-sub"></div>
+      <div class="streets" id="streets"></div>
+    </div>
+  </section>
+
+  <footer><div class="card" id="about"></div></footer>
+</div>
+
+<script id="report-data" type="application/json">__DATA__</script>
+<script>
+(() => {
+"use strict";
+const D = JSON.parse(document.getElementById("report-data").textContent);
+const M = D.meta, rows = D.deals, P = D.parcels || {};
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const nf = new Intl.NumberFormat("he-IL");
+const ok = v => v != null && isFinite(v);
+const ils = v => ok(v) ? "₪" + nf.format(Math.round(v)) : "—";
+const num = v => ok(v) ? nf.format(Math.round(v)) : "—";
+const short = v => {
+  if (!ok(v)) return "—";
+  const a = Math.abs(v);
+  if (a >= 1e6) return "₪" + (v / 1e6).toLocaleString("he-IL", {maximumFractionDigits: a >= 1e7 ? 1 : 2}) + "M";
+  if (a >= 1e3) return "₪" + Math.round(v / 1e3) + "K";
+  return "₪" + Math.round(v);
+};
+const dfmt = s => s ? `${s.slice(8,10)}/${s.slice(5,7)}/${s.slice(0,4)}` : "—";
+const median = arr => {
+  const a = arr.filter(v => ok(v) && v > 0).sort((x, y) => x - y);
+  if (!a.length) return null;
+  const m = a.length >> 1;
+  return a.length % 2 ? a[m] : (a[m - 1] + a[m]) / 2;
+};
+// percent change with a left-to-right mark so the sign stays in front of the number inside RTL text
+const pct = (a, b, digits = 0) => { const v = +((a / b - 1) * 100).toFixed(digits) || 0; return `\u200e${v > 0 ? "+" : ""}${v}%`; };
+// robust color range: 5th–95th percentile, clamped to Tukey fences (Q1−1.5·IQR, Q3+1.5·IQR) so parking/storage
+// rows or tiny sold portions (absurd ₪/m²) cannot flatten the scale
+const range = vals => { const a = vals.filter(v => ok(v) && v > 0).sort((x, y) => x - y); if (!a.length) return [0, 0];
+  const q = p => a[Math.min(a.length - 1, Math.round(p * (a.length - 1)))], iqr = q(.75) - q(.25);
+  return [Math.max(q(.05), q(.25) - 1.5 * iqr), Math.min(q(.95), q(.75) + 1.5 * iqr)]; };
+const unit = (v, [lo, hi]) => !ok(v) || hi <= lo ? .5 : Math.max(0, Math.min(1, (v - lo) / (hi - lo)));
+const PAL = ["#4f46e5","#0ea5e9","#10b981","#f59e0b","#ef4444","#8b5cf6","#ec4899","#14b8a6","#84cc16","#f97316","#06b6d4","#a855f7","#64748b","#22c55e","#e11d48"];
+const FONT = "Heebo, system-ui, Arial, sans-serif";
+const TT = {backgroundColor:"rgba(15,23,42,.94)", borderWidth:0, textStyle:{color:"#fff", fontFamily:FONT, fontSize:13}, extraCssText:"direction:rtl;text-align:right;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.25)"};
+const AGE_NEW = "חדשה", AGE_OLD = "יד שנייה", UNK = "לא ידוע";
+
+/* ---------- buckets ---------- */
+function niceStep(range, target) {
+  const raw = Math.max(range, 1) / target, p = Math.pow(10, Math.floor(Math.log10(raw)));
+  for (const m of [1, 2, 2.5, 5, 10]) if (raw <= m * p) return m * p;
+  return 10 * p;
+}
+function makeBuckets(vals, target, fmt) {
+  const a = vals.filter(v => ok(v) && v > 0).sort((x, y) => x - y);
+  if (!a.length) return {of: () => UNK, labels: []};
+  const q = p => a[Math.min(a.length - 1, Math.floor(p * (a.length - 1)))];
+  let lo = q(0.03), hi = q(0.97);
+  const step = niceStep(hi - lo || a[0] * 0.2, target);
+  lo = Math.floor(lo / step) * step; hi = Math.ceil(hi / step) * step; if (hi <= lo) hi = lo + step;
+  const n = Math.round((hi - lo) / step), hasLow = a[0] < lo, hasHigh = a[a.length - 1] >= hi, labels = [];
+  if (hasLow) labels.push(`עד ${fmt(lo)}`);
+  for (let i = 0; i < n; i++) labels.push(`${fmt(lo + i * step)}–${fmt(lo + (i + 1) * step)}`);
+  if (hasHigh) labels.push(`${fmt(hi)}+`);
+  const of = v => !(v > 0) ? UNK : v < lo ? labels[0] : v >= hi ? labels[labels.length - 1] : labels[(hasLow ? 1 : 0) + Math.floor((v - lo) / step)];
+  return {of, labels};
+}
+const PB = makeBuckets(rows.map(d => d.amount), 8, short);
+const AB = makeBuckets(rows.map(d => d.area), 6, v => nf.format(v) + " מ״ר");
+
+/* ---------- prepare rows ---------- */
+const roomsLabel = r => !r ? UNK : r >= 8 ? "8+" : String(r);
+rows.forEach((d, i) => {
+  d._i = i; d._y = +d.date.slice(0, 4);
+  const mo = +d.date.slice(5, 7);
+  d._m = d.date.slice(0, 7); d._q = `${d._y} Q${Math.ceil(mo / 3)}`;
+  d._rooms = roomsLabel(d.rooms);
+  d._age = !d.yb ? UNK : (d._y - d.yb) <= 1 ? AGE_NEW : AGE_OLD;
+  d._pb = PB.of(d.amount); d._ab = AB.of(d.area);
+  d._pk = `${d.gush}-${d.helka}`;
+  const approx = d.street_src === "nearest";
+  d._addr = d.addresses && d.addresses.length ? d.addresses[0] + (d.addresses.length > 1 ? ` (+${d.addresses.length - 1})` : "")
+          : d.street ? (approx ? "≈ " : "") + d.street : "—";
+  d._s = [(d.addresses || []).join(" "), d.street, d.nature, `${d.gush}/${d.helka}`, `${d.gush}-${d.helka}`,
+          `${d.gush}/${d.helka}/${d.sub}`, d.date, dfmt(d.date), d._rooms + " חדרים", d._age].join(" ").toLowerCase();
+});
+
+/* ---------- dimensions ---------- */
+const rk = v => v === UNK ? 1e9 : v === "8+" ? 8 : parseFloat(v);
+const DIMS = {
+  street:  {label:"רחוב",        get:d => d.street || "ללא שיוך רחוב"},
+  rooms:   {label:"חדרים",       get:d => d._rooms, cmp:(a, b) => rk(a) - rk(b)},
+  nature:  {label:"סוג נכס",     get:d => d.nature || UNK},
+  age:     {label:"חדשה/יד שנייה", get:d => d._age},
+  year:    {label:"שנה",         get:d => String(d._y), cmp:(a, b) => a.localeCompare(b)},
+  quarter: {label:"רבעון",       get:d => d._q, cmp:(a, b) => a.localeCompare(b)},
+  price:   {label:"טווח מחיר",   get:d => d._pb, cmp:(a, b) => PB.labels.indexOf(a) - PB.labels.indexOf(b)},
+  size:    {label:"טווח שטח",    get:d => d._ab, cmp:(a, b) => AB.labels.indexOf(a) - AB.labels.indexOf(b)},
+  parcel:  {label:"גוש-חלקה",    get:d => d._pk},
+};
+const COLORS = {};
+for (const k of Object.keys(DIMS)) {
+  const cnt = new Map();
+  rows.forEach(d => { const v = DIMS[k].get(d); cnt.set(v, (cnt.get(v) || 0) + 1); });
+  const keys = [...cnt.keys()].sort(DIMS[k].cmp || ((a, b) => cnt.get(b) - cnt.get(a)));
+  COLORS[k] = new Map(keys.map((v, i) => [v, v === UNK ? "#94a3b8" : PAL[i % PAL.length]]));
+}
+COLORS.age = new Map([[AGE_NEW, "#10b981"], [AGE_OLD, "#4f46e5"], [UNK, "#94a3b8"]]);
+const col = (dim, v) => (COLORS[dim] && COLORS[dim].get(v)) || "#94a3b8";
+
+function stats(list) {
+  let sum = 0, min = Infinity, max = -Infinity, last = "";
+  for (const d of list) { const a = d.amount || 0; sum += a; if (a > 0 && a < min) min = a; if (a > max) max = a; if (d.date > last) last = d.date; }
+  return {n:list.length, sum, min:isFinite(min) ? min : null, max:isFinite(max) ? max : null, last,
+          med:median(list.map(d => d.amount)), medP:median(list.map(d => d.ppsqm)), medA:median(list.map(d => d.area)),
+          medR:median(list.map(d => d.rooms))};
+}
+function group(list, dim) {
+  const m = new Map();
+  for (const d of list) { const k = DIMS[dim].get(d); if (!m.has(k)) m.set(k, []); m.get(k).push(d); }
+  const g = [...m].map(([key, l]) => ({key, rows:l, st:stats(l)}));
+  return g.sort(DIMS[dim].cmp ? (a, b) => DIMS[dim].cmp(a.key, b.key) : (a, b) => b.st.n - a.st.n);
+}
+
+/* ---------- state + filtering ---------- */
+const state = {q:[], from:"", to:"", pmin:null, pmax:null, sel:{}, gran:"quarter", metric:"price", dim:"street",
+               sort:{k:"date", dir:-1}, bsort:{k:null, dir:-1}, page:0, pageSize:25};
+Object.keys(DIMS).forEach(k => state.sel[k] = new Set());
+function pass(d, skip) {
+  for (const t of state.q) if (!d._s.includes(t)) return false;
+  if (state.from && d.date < state.from) return false;
+  if (state.to && d.date > state.to) return false;
+  if (state.pmin != null && !(d.amount >= state.pmin)) return false;
+  if (state.pmax != null && !(d.amount <= state.pmax)) return false;
+  for (const k in state.sel) if (k !== skip && state.sel[k].size && !state.sel[k].has(DIMS[k].get(d))) return false;
+  return true;
+}
+const filtered = skip => rows.filter(d => pass(d, skip));
+function toggle(dim, key) { const s = state.sel[dim]; s.has(key) ? s.delete(key) : s.add(key); state.page = 0; render(); }
+
+/* ---------- charts ---------- */
+const charts = {};
+function chart(id) {
+  if (!window.echarts) return null;
+  if (!charts[id]) charts[id] = echarts.init(document.getElementById(id), null, {renderer:"canvas"});
+  return charts[id];
+}
+const base = o => Object.assign({textStyle:{fontFamily:FONT}, animationDuration:500, animationDurationUpdate:350}, o);
+const emptyOpt = () => base({graphic:{type:"text", left:"center", top:"middle", style:{text:"אין עסקאות תואמות לסינון", fill:"#94a3b8", fontSize:15, fontFamily:FONT}}});
+const tip = (title, st, extra = "") => `<b>${esc(title)}</b>${extra}<br>עסקאות: <b>${nf.format(st.n)}</b><br>חציון מחיר: ${ils(st.med)}<br>חציון ₪/מ״ר: ${ils(st.medP)}<br>חציון שטח: ${num(st.medA)} מ״ר`;
+
+function periodsBetween(a, b, gran) {
+  const out = [];
+  let y = +a.slice(0, 4), m = +a.slice(5, 7);
+  const ye = +b.slice(0, 4), me = +b.slice(5, 7);
+  if (gran === "year") { for (; y <= ye; y++) out.push(String(y)); return out; }
+  if (gran === "quarter") {
+    let q = Math.ceil(m / 3); const qe = Math.ceil(me / 3);
+    while (y < ye || (y === ye && q <= qe)) { out.push(`${y} Q${q}`); if (++q > 4) { q = 1; y++; } }
+    return out;
+  }
+  while (y < ye || (y === ye && m <= me)) { out.push(`${y}-${String(m).padStart(2, "0")}`); if (++m > 12) { m = 1; y++; } }
+  return out;
+}
+function periodRange(p) {
+  if (/^\d{4}$/.test(p)) return [`${p}-01-01`, `${p}-12-31`];
+  const q = p.match(/^(\d{4}) Q(\d)$/);
+  if (q) { const s = (q[2] - 1) * 3 + 1, e = s + 2; return [`${q[1]}-${String(s).padStart(2, "0")}-01`, `${q[1]}-${String(e).padStart(2, "0")}-${new Date(+q[1], e, 0).getDate()}`]; }
+  const [y, m] = p.split("-");
+  return [`${p}-01`, `${p}-${new Date(+y, +m, 0).getDate()}`];
+}
+const METRIC = {price:{name:"חציון מחיר", get:d => d.amount, fmt:short},
+                ppsqm:{name:"חציון ₪/מ״ר", get:d => d.ppsqm, fmt:v => short(v)},
+                area:{name:"חציון שטח (מ״ר)", get:d => d.area, fmt:v => num(v)}};
+
+function renderTime(f) {
+  const c = chart("c-time"); if (!c) return;
+  if (!f.length) return c.setOption(emptyOpt(), true);
+  const key = state.gran === "month" ? d => d._m : state.gran === "year" ? d => String(d._y) : d => d._q;
+  const dates = f.map(d => d.date).sort();
+  const labels = periodsBetween(dates[0], dates[dates.length - 1], state.gran);
+  const by = new Map(labels.map(l => [l, []]));
+  f.forEach(d => by.get(key(d))?.push(d));
+  const met = METRIC[state.metric];
+  const counts = labels.map(l => by.get(l).length);
+  const meds = labels.map(l => median(by.get(l).map(met.get)));
+  c.setOption(base({
+    tooltip:{...TT, trigger:"axis", axisPointer:{type:"shadow"},
+      formatter: ps => { const l = ps[0].axisValue, st = stats(by.get(l)); return tip(l, st); }},
+    legend:{top:0, left:"center", textStyle:{fontFamily:FONT}},
+    grid:{left:56, right:64, top:44, bottom:labels.length > 14 ? 70 : 36},
+    xAxis:{type:"category", data:labels, axisLabel:{rotate:labels.length > 14 ? 45 : 0, color:"#64748b"}, axisLine:{lineStyle:{color:"#cbd5e1"}}},
+    yAxis:[{type:"value", name:"עסקאות", minInterval:1, splitLine:{lineStyle:{color:"#eef2f7"}}, axisLabel:{color:"#64748b"}},
+           {type:"value", name:met.name, axisLabel:{formatter:met.fmt, color:"#64748b"}, splitLine:{show:false}, scale:true}],
+    series:[
+      {type:"bar", name:"עסקאות", data:counts, barMaxWidth:38,
+       itemStyle:{borderRadius:[6, 6, 0, 0], color:new echarts.graphic.LinearGradient(0, 0, 0, 1, [{offset:0, color:"#818cf8"}, {offset:1, color:"#c7d2fe"}])},
+       emphasis:{itemStyle:{color:"#4f46e5"}}},
+      {type:"line", name:met.name, yAxisIndex:1, data:meds, smooth:true, smoothMonotone:"x", connectNulls:true, symbol:"circle", symbolSize:8,
+       lineStyle:{width:3, color:"#f59e0b"}, itemStyle:{color:"#f59e0b", borderColor:"#fff", borderWidth:2},
+       areaStyle:{color:new echarts.graphic.LinearGradient(0, 0, 0, 1, [{offset:0, color:"rgba(245,158,11,.18)"}, {offset:1, color:"rgba(245,158,11,0)"}])}}]
+  }), true);
+  c.off("click");
+  c.on("click", p => { const [a, b] = periodRange(p.name); state.from = a; state.to = b; $("#from").value = a; $("#to").value = b; state.page = 0; render(); });
+}
+
+function renderPie(dim, id) {
+  const c = chart(id); if (!c) return;
+  const g = group(filtered(dim), dim), sel = state.sel[dim];
+  if (!g.length) return c.setOption(emptyOpt(), true);
+  c.setOption(base({
+    tooltip:{...TT, trigger:"item", formatter:p => tip(p.name, p.data.st, ` · ${p.percent}%`)},
+    legend:{type:"scroll", bottom:0, textStyle:{fontFamily:FONT}, icon:"circle"},
+    series:[{type:"pie", radius:["44%", "70%"], center:["50%", "44%"], avoidLabelOverlap:true, minAngle:3,
+      itemStyle:{borderColor:"#fff", borderWidth:2, borderRadius:6},
+      label:{formatter:"{b}\n{d}%", fontFamily:FONT, fontSize:12, color:"#334155"},
+      labelLine:{length:10, length2:8},
+      data:g.map(x => ({name:x.key, value:x.st.n, st:x.st,
+        itemStyle:{color:col(dim, x.key), opacity:sel.size && !sel.has(x.key) ? .25 : 1}}))}]
+  }), true);
+  c.off("click"); c.on("click", p => toggle(dim, p.name));
+}
+
+function lerpColor(a, b, t) {
+  const pa = a.match(/\w\w/g).map(h => parseInt(h, 16)), pb = b.match(/\w\w/g).map(h => parseInt(h, 16));
+  return "#" + pa.map((v, i) => Math.round(v + (pb[i] - v) * t).toString(16).padStart(2, "0")).join("");
+}
+// multi-stop ramp (adjacent stops close in hue, so no muddy gray midpoints); keep in sync with .legend .bar
+const RAMP = ["2563eb", "06b6d4", "22c55e", "facc15", "f97316", "dc2626"];
+const ramp = t => { const s = Math.min(RAMP.length - 2, Math.floor(t * (RAMP.length - 1))); return lerpColor(RAMP[s], RAMP[s + 1], t * (RAMP.length - 1) - s); };
+
+function renderStreet() {
+  const c = chart("c-street"); if (!c) return;
+  const all = group(filtered("street"), "street").sort((a, b) => b.st.n - a.st.n);
+  if (!all.length) return c.setOption(emptyOpt(), true);
+  const g = all.slice(0, 18).reverse(), sel = state.sel.street;
+  const rg = range(g.map(x => x.st.medP));
+  c.setOption(base({
+    tooltip:{...TT, trigger:"item", formatter:p => tip(p.name, p.data.st)},
+    grid:{left:40, right:10, top:10, bottom:24, containLabel:true},
+    xAxis:{type:"value", inverse:true, minInterval:1, splitLine:{lineStyle:{color:"#eef2f7"}}, axisLabel:{color:"#64748b"}},
+    yAxis:{type:"category", position:"right", data:g.map(x => x.key), axisLabel:{color:"#334155", fontSize:12.5}, axisTick:{show:false}, axisLine:{show:false}},
+    series:[{type:"bar", barMaxWidth:22, label:{show:true, position:"left", color:"#334155", fontFamily:FONT},
+      data:g.map(x => ({value:x.st.n, name:x.key, st:x.st,
+        itemStyle:{borderRadius:[6, 0, 0, 6], color:ok(x.st.medP) ? lerpColor("a5b4fc", "312e81", unit(x.st.medP, rg)) : "#818cf8",
+                   opacity:sel.size && !sel.has(x.key) ? .3 : 1}}))}]
+  }), true);
+  c.off("click"); c.on("click", p => toggle("street", p.name));
+}
+
+function renderScatter(f) {
+  const c = chart("c-scatter"); if (!c) return;
+  const pts = f.filter(d => d.area > 0 && d.amount > 0);
+  if (!pts.length) return c.setOption(emptyOpt(), true);
+  const g = group(pts, "rooms");
+  c.setOption(base({
+    tooltip:{...TT, trigger:"item", formatter:p => {
+      const d = rows[p.data[2]];
+      return `<b>${esc(d._addr)}</b><br>${dfmt(d.date)} · ${esc(d.nature)}<br>${d.rooms || "?"} חדרים · ${num(d.area)} מ״ר<br>מחיר: <b>${ils(d.amount)}</b><br>₪/מ״ר (מנורמל): ${ils(d.ppsqm)}<br>גוש ${d.gush} חלקה ${d.helka}${d.sub ? " תת " + d.sub : ""}`; }},
+    legend:{type:"scroll", bottom:0, textStyle:{fontFamily:FONT}},
+    grid:{left:64, right:20, top:20, bottom:56},
+    xAxis:{type:"value", name:"שטח (מ״ר)", nameLocation:"middle", nameGap:26, scale:true, splitLine:{lineStyle:{color:"#eef2f7"}}, axisLabel:{color:"#64748b"}},
+    yAxis:{type:"value", scale:true, axisLabel:{formatter:short, color:"#64748b"}, splitLine:{lineStyle:{color:"#eef2f7"}}},
+    series:g.map(x => ({type:"scatter", name:x.key + " חד׳", symbolSize:11, itemStyle:{color:col("rooms", x.key), opacity:.8, borderColor:"#fff", borderWidth:1},
+      emphasis:{scale:1.6}, data:x.rows.map(d => [d.area, d.amount, d._i])}))
+  }), true);
+  c.off("click"); c.on("click", p => toggle("parcel", rows[p.data[2]]._pk));
+}
+
+function renderHist() {
+  const c = chart("c-hist"); if (!c) return;
+  const f = filtered("price"), sel = state.sel.price;
+  if (!f.length) return c.setOption(emptyOpt(), true);
+  const cnt = new Map(PB.labels.map(l => [l, []]));
+  f.forEach(d => cnt.get(d._pb)?.push(d));
+  const labels = PB.labels;
+  c.setOption(base({
+    tooltip:{...TT, trigger:"item", formatter:p => tip(p.name, p.data.st)},
+    grid:{left:44, right:14, top:14, bottom:labels.length > 7 ? 64 : 34},
+    xAxis:{type:"category", data:labels, axisLabel:{rotate:labels.length > 7 ? 35 : 0, color:"#64748b", fontSize:11}},
+    yAxis:{type:"value", minInterval:1, splitLine:{lineStyle:{color:"#eef2f7"}}},
+    series:[{type:"bar", barCategoryGap:"12%", label:{show:true, position:"top", color:"#475569"},
+      data:labels.map(l => ({value:cnt.get(l).length, name:l, st:stats(cnt.get(l)),
+        itemStyle:{borderRadius:[6, 6, 0, 0], color:"#0ea5e9", opacity:sel.size && !sel.has(l) ? .3 : 1}}))}]
+  }), true);
+  c.off("click"); c.on("click", p => toggle("price", p.name));
+}
+
+function renderBench(f) {
+  const B = M.benchmark;
+  if (!B || !B.years || !B.years.length || M.area.mode === "settlement") { $("#bench-card").style.display = "none"; return; }
+  const c = chart("c-bench"); if (!c) return;
+  $("#bench-sub").textContent = `העיר (${B.settlement}) לפי אותם סינוני מקור${B.nature ? " וסוג " + B.nature : " — ללא סינון סוג נכס, ולכן הבדלי תמהיל משפיעים"}. האזור מחושב מהעסקאות המסוננות כרגע בדוח.`;
+  const by = new Map(); f.forEach(d => { if (!by.has(d._y)) by.set(d._y, []); by.get(d._y).push(d); });
+  const years = [...new Set([...B.years.map(y => y.year), ...by.keys()])].sort();
+  const city = new Map(B.years.map(y => [y.year, y]));
+  const area = years.map(y => by.has(y) ? stats(by.get(y)) : null);
+  c.setOption(base({
+    tooltip:{...TT, trigger:"axis", axisPointer:{type:"shadow"}, formatter:ps => {
+      const i = ps[0].dataIndex, y = years[i], a = area[i], cy = city.get(y);
+      const diff = a && cy && a.medP && cy.median_ppsqm_normalized ? ((a.medP / cy.median_ppsqm_normalized - 1) * 100) : null;
+      return `<b>${y}</b><br>האזור: ${ils(a?.medP)} (${a ? a.n : 0} עסקאות)<br>העיר: ${ils(cy?.median_ppsqm_normalized)} (${cy ? nf.format(cy.deals) : 0} עסקאות)` +
+             (diff != null ? `<br>פער: <b>${pct(a.medP, cy.median_ppsqm_normalized, 1)}</b>` : ""); }},
+    legend:{top:0, left:"center", textStyle:{fontFamily:FONT}},
+    grid:{left:64, right:20, top:40, bottom:30},
+    xAxis:{type:"category", data:years.map(String)},
+    yAxis:{type:"value", axisLabel:{formatter:short}, splitLine:{lineStyle:{color:"#eef2f7"}}},
+    series:[
+      {type:"bar", name:"האזור", barMaxWidth:40, itemStyle:{borderRadius:[6, 6, 0, 0], color:"#4f46e5"}, data:area.map(a => a?.medP ?? null),
+       label:{show:true, position:"top", fontFamily:FONT, color:"#4f46e5", formatter:p => {
+         const cy = city.get(years[p.dataIndex]); return p.value && cy?.median_ppsqm_normalized ? pct(p.value, cy.median_ppsqm_normalized) : ""; }}},
+      {type:"bar", name:`${B.settlement} (כל העיר)`, barMaxWidth:40, itemStyle:{borderRadius:[6, 6, 0, 0], color:"#cbd5e1"},
+       data:years.map(y => city.get(y)?.median_ppsqm_normalized ?? null)}]
+  }), true);
+}
+
+/* ---------- map: gush outlines, parcel polygons, one dot per purchased apartment ---------- */
+let map = null, legendCtl = null, homeView = null, parcelLayer = null, aptLayer = null, curGroups = new Map();
+const aptMarkers = new Map(), parcelShapes = new Map();
+const NADLAN = (g, h) => `https://www.over.org.il/projects/nadlan?tab=gush&g=${g}&h=${h}`;
+const PSTYLE_ON = {color:"#4338ca", weight:2, opacity:.95, fillColor:"#818cf8", fillOpacity:.24};
+const PSTYLE_OFF = {color:"#94a3b8", weight:.8, opacity:.8, fillColor:"#cbd5e1", fillOpacity:.05};
+const portionLabel = p => p == null ? "—" : p >= 1 ? "מלא" : (Math.round(p * 1000) / 10) + "%";
+const dotRadius = () => { const z = map.getZoom(); return z >= 18 ? 8 : z >= 17 ? 6.5 : z >= 16 ? 5 : 3.5; };
+// Deals carry no in-building location, so a parcel's apartments are fanned out on a sunflower spiral
+// around the parcel's inner point, spaced to stay roughly inside the parcel.
+function aptPositions(p, n) {
+  if (n === 1) return [[p.lat, p.lon]];
+  const side = Math.sqrt(p.area_m2 || 400), s = Math.max(2, Math.min(7, .45 * side / (Math.sqrt(n) + 1)));
+  const mLat = 1 / 111320, mLon = 1 / (111320 * Math.cos(p.lat * Math.PI / 180)), GA = Math.PI * (3 - Math.sqrt(5));
+  return Array.from({length:n}, (_, k) => { const r = s * Math.sqrt(k + .5), a = k * GA; return [p.lat + r * Math.sin(a) * mLat, p.lon + r * Math.cos(a) * mLon]; });
+}
+function aptPopup(d) {
+  const addr = (d.addresses || []).join(" · ") || (d.street ? (d.street_src === "nearest" ? "≈ " : "") + d.street : "—");
+  const kv = [["תאריך עסקה", dfmt(d.date)], ["כתובת", addr], ["גוש / חלקה / תת-חלקה", `${d.gush} / ${d.helka} / ${d.sub || "—"}`],
+              ["סוג נכס", d.nature], ["חדרים", d.rooms || "—"], ["שטח", ok(d.area) ? num(d.area) + " מ״ר" : "—"],
+              ["₪ למ״ר (מנורמל)", ils(d.ppsqm)], ["חלק נמכר", portionLabel(d.portion)], ["שנת בנייה", d.yb || "—"], ["חדשה / יד שנייה", d._age]];
+  return `<div class="pop"><div class="m">רכישה שעומדת בתנאי החיפוש</div><div class="price">${ils(d.amount)}</div>
+    <table class="kv">${kv.map(([k, v]) => `<tr><td>${k}</td><td>${esc(v)}</td></tr>`).join("")}</table>
+    <div class="acts"><button data-pk="${d._pk}">${state.sel.parcel.has(d._pk) ? "הסר סינון חלקה" : "סנן לחלקה זו"}</button>
+    <a target="_blank" rel="noopener" href="${NADLAN(d.gush, d.helka)}">עמוד הנכס ↗</a></div></div>`;
+}
+function openParcel(pk, latlng) {
+  const [g, h] = pk.split("-"), p = P[pk] || {}, x = curGroups.get(pk), inReport = rows.filter(d => d._pk === pk).length;
+  const addrs = x ? [...new Set(x.rows.flatMap(d => d.addresses || []))] : [];
+  const meta = [addrs.slice(0, 3).join(" · ") + (addrs.length > 3 ? ` (+${addrs.length - 3})` : ""),
+                p.area_m2 ? `שטח חלקה ${num(p.area_m2)} מ״ר` : "", p.dwellings ? `${nf.format(p.dwellings)} דירות בגזטיר` : ""].filter(Boolean).join(" · ");
+  const items = x ? x.rows.slice().sort((a, b) => b.date.localeCompare(a.date)).map(d =>
+    `<li data-deal="${d._i}"><span class="dot" style="background:${aptMarkers.get(d._i)?.options.fillColor || "#64748b"}"></span>${dfmt(d.date)} · תת ${esc(d.sub || "—")} · ${d.rooms || "?"} חד׳ · ${num(d.area)} מ״ר · <b>${short(d.amount)}</b></li>`).join("") : "";
+  L.popup({maxWidth:360}).setLatLng(latlng).setContent(`<div class="pop"><h5>גוש ${g} · חלקה ${h}</h5><div class="m">${esc(meta)}</div>
+    ${x ? `<div style="margin-top:6px">${x.st.n} עסקאות תואמות · חציון <b>${short(x.st.med)}</b> · ${ils(x.st.medP)} למ״ר</div><ul class="deals">${items}</ul>`
+        : `<div class="m" style="margin-top:6px">אין עסקאות תואמות בסינון הנוכחי${inReport ? ` (${inReport} בדוח כולו)` : ""}</div>`}
+    <div class="acts">${inReport ? `<button data-pk="${pk}">${state.sel.parcel.has(pk) ? "הסר סינון חלקה" : "סנן לחלקה זו"}</button>` : ""}
+    <a target="_blank" rel="noopener" href="${NADLAN(g, h)}">עמוד החלקה ↗</a></div></div>`).openOn(map);
+}
+function flyToDeal(i) {
+  const m = aptMarkers.get(i); if (!m) return;
+  map.closePopup(); map.flyTo(m.getLatLng(), Math.max(map.getZoom(), 18), {duration:.6});
+  setTimeout(() => m.openPopup(), 700);
+}
+function initMap() {
+  if (!window.L) { $("#map").innerHTML = '<div class="empty">המפה דורשת חיבור לאינטרנט</div>'; return; }
+  // SVG, not canvas: a canvas per pane would sit over the parcel pane and swallow its clicks
+  map = L.map("map", {scrollWheelZoom:false, zoomControl:true});
+  map.on("click", () => map.scrollWheelZoom.enable());
+  map.on("mouseout", () => map.scrollWheelZoom.disable());
+  const esri = s => `https://server.arcgisonline.com/ArcGIS/rest/services/${s}/MapServer/tile/{z}/{y}/{x}`;
+  const ATTR = "Tiles &copy; Esri — Esri, Maxar, HERE, Garmin, &copy; OpenStreetMap contributors";
+  const bases = {
+    "מפה בהירה": L.tileLayer(esri("Canvas/World_Light_Gray_Base"), {attribution:ATTR, maxNativeZoom:16, maxZoom:19}),
+    "מפת רחובות": L.tileLayer(esri("World_Street_Map"), {attribution:ATTR, maxNativeZoom:18, maxZoom:19}),
+    "תצלום אוויר": L.tileLayer(esri("World_Imagery"), {attribution:ATTR, maxNativeZoom:18, maxZoom:19}),
+  };
+  bases["מפה בהירה"].addTo(map);
+  map.createPane("gush").style.zIndex = 430; map.getPane("gush").style.pointerEvents = "none";
+  map.createPane("apts").style.zIndex = 460;
+  // Vector layers need a map view before they are added, so compute bounds first.
+  const bounds = L.latLngBounds([]);
+  const poly = M.area.polygon ? L.geoJSON(M.area.polygon, {interactive:false, style:{color:"#4f46e5", weight:3, dashArray:"8 6", fill:false}}) : null;
+  if (poly) bounds.extend(poly.getBounds());
+  (M.area.parcels || []).forEach(([, , lat, lon]) => bounds.extend([lat, lon]));
+  if (!bounds.isValid()) rows.forEach(d => { const p = P[d._pk]; if (p) bounds.extend([p.lat, p.lon]); });
+  homeView = () => bounds.isValid() ? map.fitBounds(bounds.pad(.06)) : map.setView([31.95, 34.85], 8);
+  homeView();
+  parcelLayer = L.layerGroup().addTo(map);
+  Object.entries(P).forEach(([pk, p]) => {
+    if (!p.geom) return;
+    const lyr = L.geoJSON(p.geom, {style:PSTYLE_OFF});
+    lyr.bindTooltip(pk.split("-")[1], {permanent:true, direction:"center", className:"plabel"});
+    lyr.on("click", e => { L.DomEvent.stop(e); openParcel(pk, e.latlng); });
+    lyr.on("mouseover", () => lyr.setStyle({weight:3.2, color:"#312e81"}));
+    lyr.on("mouseout", () => lyr.setStyle(curGroups.has(pk) ? PSTYLE_ON : PSTYLE_OFF));
+    lyr.addTo(parcelLayer); parcelShapes.set(pk, lyr);
+  });
+  if (poly) poly.addTo(map);
+  const gushLayer = L.layerGroup().addTo(map);
+  (M.area.gush_outlines || []).forEach(o => {
+    L.geoJSON(o.geom, {pane:"gush", interactive:false, style:{color:"#1e1b4b", weight:2.6, opacity:.85, fill:false}}).addTo(gushLayer);
+    gushLayer.addLayer(L.tooltip({permanent:true, direction:"center", className:"glabel"}).setLatLng([o.lat, o.lon]).setContent(`גוש ${o.gush}`));
+  });
+  aptLayer = L.layerGroup().addTo(map);
+  L.control.layers(bases, {"גבולות גושים": gushLayer, "חלקות": parcelLayer, "דירות שנמכרו": aptLayer}, {collapsed:true, position:"topright"}).addTo(map);
+  legendCtl = L.control({position:"bottomleft"});
+  legendCtl.onAdd = () => L.DomUtil.create("div", "legend");
+  legendCtl.addTo(map);
+  const onZoom = () => {
+    const z = map.getZoom(), el = map.getContainer();
+    el.classList.toggle("z17", z >= 17); el.classList.toggle("z14", z >= 14);
+    const r = dotRadius(); aptLayer.eachLayer(m => m.setRadius(r));
+  };
+  map.on("zoomend", onZoom); onZoom();
+  map.on("popupopen", e => {
+    const el = e.popup.getElement();
+    el.querySelectorAll("button[data-pk]").forEach(b => b.onclick = () => { toggle("parcel", b.dataset.pk); map.closePopup(); });
+    el.querySelectorAll("[data-deal]").forEach(li => li.onclick = () => flyToDeal(+li.dataset.deal));
+  });
+  $("#map-fit").onclick = () => homeView();
+  $("#map-full").onclick = () => document.fullscreenElement ? document.exitFullscreen() : $("#map-card").requestFullscreen?.();
+  document.addEventListener("fullscreenchange", () => setTimeout(() => map.invalidateSize(), 250));
+}
+function renderMap(f) {
+  if (!map) return;
+  aptLayer.clearLayers(); aptMarkers.clear();
+  const g = group(f, "parcel");
+  curGroups = new Map(g.map(x => [x.key, x]));
+  parcelShapes.forEach((lyr, pk) => lyr.setStyle(curGroups.has(pk) ? PSTYLE_ON : PSTYLE_OFF));
+  const rg = range(f.map(d => d.ppsqm)), r = dotRadius();
+  g.forEach(x => {
+    const p = P[x.key]; if (!p) return;
+    const list = x.rows.slice().sort((a, b) => (a.sub || "").localeCompare(b.sub || "") || a.date.localeCompare(b.date));
+    const pos = aptPositions(p, list.length);
+    list.forEach((d, i) => {
+      const m = L.circleMarker(pos[i], {pane:"apts", radius:r, color:"#fff", weight:1.8, fillOpacity:.95,
+                                        fillColor:ok(d.ppsqm) ? ramp(unit(d.ppsqm, rg)) : "#64748b"})
+        .bindTooltip(`${short(d.amount)} · ${d.rooms || "?"} חד׳ · ${num(d.area)} מ״ר · ${dfmt(d.date)}`, {direction:"top", offset:[0, -6]})
+        .bindPopup(() => aptPopup(d), {maxWidth:340});
+      m.addTo(aptLayer); aptMarkers.set(d._i, m);
+    });
+  });
+  legendCtl.getContainer().innerHTML = f.length
+    ? `<b>₪ למ״ר (מנורמל) לכל דירה</b><div class="bar"></div><div class="ends"><span>≤${short(rg[0])}</span><span>≥${short(rg[1])}</span></div>
+       <div class="row"><span class="sw" style="background:rgba(129,140,248,.35);border:2px solid #4338ca"></span>חלקה עם עסקאות תואמות</div>
+       <div class="row"><span class="sw" style="border:1px solid #94a3b8"></span>חלקה ללא עסקאות תואמות</div>
+       <div class="row"><span class="sw" style="border-top:3px solid #1e1b4b;height:0"></span>גבול גוש</div>
+       ${M.area.polygon ? `<div class="row"><span class="sw" style="border-top:3px dashed #4f46e5;height:0"></span>גבול האזור</div>` : ""}`
+    : "אין עסקאות תואמות לסינון";
+}
+
+/* ---------- tables ---------- */
+function sortRows(list, get, dir) {
+  return list.slice().sort((a, b) => {
+    const x = get(a), y = get(b);
+    if (x == null || x === "") return 1; if (y == null || y === "") return -1;
+    return (typeof x === "string" ? x.localeCompare(y, "he") : x - y) * dir;
+  });
+}
+const BCOLS = [
+  {k:"key", t:"ערך", v:x => x.key},
+  {k:"n", t:"עסקאות", v:x => x.st.n, n:true},
+  {k:"share", t:"שיעור", v:x => x.st.n, share:true},
+  {k:"med", t:"חציון מחיר", v:x => x.st.med, f:ils, n:true},
+  {k:"medP", t:"חציון ₪/מ״ר", v:x => x.st.medP, f:ils, n:true},
+  {k:"medA", t:"חציון שטח", v:x => x.st.medA, f:v => ok(v) ? num(v) + " מ״ר" : "—", n:true},
+  {k:"min", t:"מחיר מינ׳", v:x => x.st.min, f:ils, n:true},
+  {k:"max", t:"מחיר מקס׳", v:x => x.st.max, f:ils, n:true},
+  {k:"last", t:"עסקה אחרונה", v:x => x.st.last, f:dfmt},
+];
+function renderBreak(f) {
+  const dim = state.dim, g0 = group(f, dim), sel = state.sel[dim], tot = f.length || 1;
+  const s = state.bsort, g = s.k ? sortRows(g0, BCOLS.find(c => c.k === s.k).v, s.dir) : g0;
+  const maxN = Math.max(1, ...g.map(x => x.st.n));
+  $("#t-break").innerHTML = `<thead><tr>${BCOLS.map(c => `<th data-k="${c.k}">${c.k === "key" ? DIMS[dim].label : c.t}${s.k === c.k ? `<span class="ar">${s.dir > 0 ? "▲" : "▼"}</span>` : ""}</th>`).join("")}</tr></thead>
+    <tbody>${g.map(x => `<tr class="clk${sel.has(x.key) ? " sel" : ""}" data-key="${esc(x.key)}">${BCOLS.map(c => {
+      if (c.k === "key") return `<td><span class="tag" style="border-inline-start:4px solid ${col(dim, x.key)}">${esc(x.key)}</span></td>`;
+      if (c.share) return `<td><div class="share"><i style="width:${Math.max(4, 90 * x.st.n / maxN)}px"></i>${(100 * x.st.n / tot).toFixed(1)}%</div></td>`;
+      const v = c.v(x); return `<td class="${c.n ? "n" : ""}">${c.f ? c.f(v) : num(v)}</td>`; }).join("")}</tr>`).join("") ||
+      `<tr><td colspan="${BCOLS.length}" class="empty" style="height:80px">אין נתונים</td></tr>`}</tbody>`;
+  $("#t-break").querySelectorAll("th").forEach(th => th.onclick = () => {
+    const k = th.dataset.k; state.bsort = {k, dir:state.bsort.k === k ? -state.bsort.dir : (k === "key" ? 1 : -1)}; renderBreak(filtered());
+  });
+  $("#t-break").querySelectorAll("tbody tr[data-key]").forEach(tr => tr.onclick = () => toggle(dim, tr.dataset.key));
+}
+
+const COLS = [
+  {k:"date", t:"תאריך", v:d => d.date, f:d => dfmt(d.date)},
+  {k:"addr", t:"כתובת / רחוב", v:d => d._addr, f:d => d.street_src === "nearest" && !(d.addresses || []).length
+      ? `<span class="approx" title="רחוב משוער לפי הכתובת הקרובה">≈</span> ${esc(d.street)}` : esc(d._addr), cls:"addr",
+    title:d => (d.addresses || []).join(" · ")},
+  {k:"parcel", t:"גוש/חלקה/תת", v:d => d.gush * 1e7 + d.helka * 1e3 + (+d.sub || 0), f:d => `${d.gush}/${d.helka}/${d.sub || "—"}`, n:true},
+  {k:"nature", t:"סוג", v:d => d.nature, f:d => `<span class="tag">${esc(d.nature)}</span>`},
+  {k:"rooms", t:"חדרים", v:d => d.rooms, f:d => d.rooms || "—", n:true},
+  {k:"area", t:"שטח (מ״ר)", v:d => d.area, f:d => num(d.area), n:true},
+  {k:"amount", t:"מחיר", v:d => d.amount, f:d => `<b>${ils(d.amount)}</b>`, n:true},
+  {k:"ppsqm", t:"₪/מ״ר מנורמל", v:d => d.ppsqm, f:d => ils(d.ppsqm), n:true},
+  {k:"portion", t:"חלק נמכר", v:d => d.portion, f:d => d.portion == null ? "—" : d.portion >= 1 ? "מלא" : (Math.round(d.portion * 1000) / 10) + "%", n:true},
+  {k:"yb", t:"שנת בנייה", v:d => d.yb, f:d => d.yb || "—", n:true},
+  {k:"act", t:"", v:null, f:d => `<button class="rowbtn" data-pin="${d._i}" title="הצג במפה">📍</button><a class="rowbtn" target="_blank" rel="noopener" title="עמוד הנכס בנדל״ן לעם" href="https://www.over.org.il/projects/nadlan?tab=gush&g=${d.gush}&h=${d.helka}">↗</a>`},
+];
+function renderTable(f) {
+  const s = state.sort, col0 = COLS.find(c => c.k === s.k);
+  const list = sortRows(f, col0.v, s.dir), pages = Math.max(1, Math.ceil(list.length / state.pageSize));
+  state.page = Math.min(state.page, pages - 1);
+  const slice = list.slice(state.page * state.pageSize, (state.page + 1) * state.pageSize);
+  $("#t-deals").innerHTML = `<thead><tr>${COLS.map(c => `<th data-k="${c.k}">${c.t}${s.k === c.k ? `<span class="ar">${s.dir > 0 ? "▲" : "▼"}</span>` : ""}</th>`).join("")}</tr></thead>
+    <tbody>${slice.map(d => `<tr>${COLS.map(c => `<td class="${c.n ? "n" : ""} ${c.cls || ""}"${c.title ? ` title="${esc(c.title(d))}"` : ""}>${c.f(d)}</td>`).join("")}</tr>`).join("") ||
+      `<tr><td colspan="${COLS.length}" class="empty" style="height:80px">אין עסקאות תואמות</td></tr>`}</tbody>`;
+  $("#t-deals").querySelectorAll("th").forEach(th => th.onclick = () => {
+    const k = th.dataset.k; if (k === "act") return;
+    state.sort = {k, dir:state.sort.k === k ? -state.sort.dir : (["addr", "nature"].includes(k) ? 1 : -1)}; state.page = 0; renderTable(filtered());
+  });
+  $("#t-deals").querySelectorAll("[data-pin]").forEach(b => b.onclick = () => {
+    if (!map) return;
+    $("#map-card").scrollIntoView({behavior:"smooth", block:"center"});
+    flyToDeal(+b.dataset.pin);
+  });
+  $("#pager").innerHTML = `<span>עמוד ${state.page + 1} מתוך ${pages} · ${nf.format(list.length)} עסקאות</span>
+    <span class="pg"><button class="btn" id="pg-prev" ${state.page ? "" : "disabled"}>→ הקודם</button><button class="btn" id="pg-next" ${state.page < pages - 1 ? "" : "disabled"}>הבא ←</button></span>`;
+  $("#pg-prev").onclick = () => { state.page--; renderTable(filtered()); };
+  $("#pg-next").onclick = () => { state.page++; renderTable(filtered()); };
+}
+
+function renderStreets() {
+  const f = filtered("street"), cnt = new Map();
+  f.forEach(d => { const k = DIMS.street.get(d); cnt.set(k, (cnt.get(k) || 0) + 1); });
+  const meta = new Map((M.area.streets || []).map(s => [s.street, s]));
+  const keys = [...new Set([...meta.keys(), ...cnt.keys()])];
+  keys.sort((a, b) => (cnt.get(b) || 0) - (cnt.get(a) || 0) || ((meta.get(b)?.units || 0) + (meta.get(b)?.addresses || 0)) - ((meta.get(a)?.units || 0) + (meta.get(a)?.addresses || 0)));
+  if (!keys.length) { $("#streets-card").style.display = "none"; return; }
+  const sel = state.sel.street;
+  $("#streets-sub").textContent = M.area.mode === "settlement" ? "רחובות שבהם נמצאו עסקאות" :
+    `${meta.size} רחובות מזוהים באזור (רשימת הכתובות + גזטיר הנכסים). מספר העסקאות לפי הסינון הנוכחי; לחיצה מסננת.`;
+  $("#streets").innerHTML = keys.map(k => {
+    const m = meta.get(k), n = cnt.get(k) || 0;
+    const extra = m ? [m.units ? `${nf.format(m.units)} יחידות` : "", m.addresses ? `${nf.format(m.addresses)} כתובות` : ""].filter(Boolean).join(" · ") : "";
+    return `<button class="st${sel.has(k) ? " on" : ""}${n ? "" : " zero"}" data-k="${esc(k)}"><b>${esc(k)}</b><span>${n} עסקאות${extra ? " · " + extra : ""}</span></button>`;
+  }).join("");
+  $("#streets").querySelectorAll(".st").forEach(b => b.onclick = () => toggle("street", b.dataset.k));
+}
+
+/* ---------- kpis, header, chips ---------- */
+function renderKPIs(f) {
+  const st = stats(f), B = M.benchmark;
+  const cy = B && B.years && B.years.length ? B.years[B.years.length - 1] : null;
+  const lastD = f.reduce((a, d) => (!a || d.date > a.date ? d : a), null);
+  const k = [
+    ["עסקאות", nf.format(st.n), `מתוך ${nf.format(rows.length)} בדוח`, "#4f46e5"],
+    ["חציון מחיר", short(st.med), st.n ? `טווח ${short(st.min)} – ${short(st.max)}` : "", "#0ea5e9"],
+    ["חציון ₪ למ״ר (מנורמל)", ils(st.medP), cy && M.area.mode !== "settlement" ? `${B.settlement} ${cy.year}: ${ils(cy.median_ppsqm_normalized)}` : "שווי ÷ (שטח × חלק נמכר)", "#10b981"],
+    ["חציון שטח", ok(st.medA) ? num(st.medA) + " מ״ר" : "—", ok(st.medR) ? `חציון חדרים: ${st.medR}` : "", "#f59e0b"],
+    ["סך השווי המדווח", short(st.sum), "סכום כל העסקאות המסוננות", "#8b5cf6"],
+    ["עסקה אחרונה", lastD ? dfmt(lastD.date) : "—", lastD ? `${lastD._addr} · ${short(lastD.amount)}` : "", "#ec4899"],
+  ];
+  if (M.area.dwellings) k.push(["דירות באזור (גזטיר)", nf.format(M.area.dwellings), `${nf.format(M.area.n_parcels)} חלקות · ${(M.area.streets || []).length} רחובות`, "#14b8a6"]);
+  $("#kpis").innerHTML = k.map(([h, v, s, c]) => `<div class="kpi" style="--c:${c}"><h4>${h}</h4><div class="v">${v}</div><div class="s">${esc(s)}</div></div>`).join("");
+}
+function renderActiveChips() {
+  const ch = [];
+  if (state.q.length) ch.push(["q", null, `חיפוש: ${state.q.join(" ")}`]);
+  if (state.from || state.to) ch.push(["date", null, `${state.from ? dfmt(state.from) : "…"} – ${state.to ? dfmt(state.to) : "…"}`]);
+  if (state.pmin != null || state.pmax != null) ch.push(["price$", null, `מחיר ${state.pmin != null ? short(state.pmin) : "…"} – ${state.pmax != null ? short(state.pmax) : "…"}`]);
+  for (const k in state.sel) state.sel[k].forEach(v => ch.push([k, v, `${DIMS[k].label}: ${v}`]));
+  $("#achips").innerHTML = ch.map(([k, v, t], i) => `<span class="achip">${esc(t)}<button data-i="${i}" title="הסר">×</button></span>`).join("");
+  $("#achips").querySelectorAll("button").forEach(b => b.onclick = () => {
+    const [k, v] = ch[+b.dataset.i];
+    if (k === "q") { state.q = []; $("#q").value = ""; }
+    else if (k === "date") { state.from = state.to = ""; $("#from").value = $("#to").value = ""; }
+    else if (k === "price$") { state.pmin = state.pmax = null; $("#pmin").value = $("#pmax").value = ""; }
+    else state.sel[k].delete(v);
+    state.page = 0; render();
+  });
+}
+
+/* ---------- multi-select dropdowns ---------- */
+function closeAllDD() { document.querySelectorAll(".dd-pop").forEach(p => p.hidden = true); }
+document.addEventListener("click", closeAllDD);
+document.querySelectorAll(".dd").forEach(host => {
+  const dim = host.dataset.dim;
+  host.innerHTML = `<button class="dd-btn" type="button"></button><div class="dd-pop" hidden><input class="dd-q" placeholder="חיפוש…"><div class="dd-list"></div><div class="dd-foot"><button class="linkbtn dd-clear" type="button">נקה</button><button class="linkbtn dd-close" type="button">סגור</button></div></div>`;
+  const btn = host.querySelector(".dd-btn"), pop = host.querySelector(".dd-pop"), list = host.querySelector(".dd-list"), q = host.querySelector(".dd-q");
+  const fill = () => {
+    const g = group(filtered(dim), dim), cnt = new Map(g.map(x => [x.key, x.st.n]));
+    state.sel[dim].forEach(k => { if (!cnt.has(k)) cnt.set(k, 0); });
+    const term = q.value.trim().toLowerCase();
+    const items = [...cnt].filter(([k]) => !term || k.toLowerCase().includes(term));
+    list.innerHTML = items.map(([k, n]) => `<label class="dd-item"><input type="checkbox" data-k="${esc(k)}" ${state.sel[dim].has(k) ? "checked" : ""}><span>${esc(k)}</span><em>${n}</em></label>`).join("") || '<div class="hint" style="padding:8px">אין ערכים</div>';
+    list.querySelectorAll("input").forEach(cb => cb.onchange = () => toggle(dim, cb.dataset.k));
+  };
+  btn.onclick = e => { e.stopPropagation(); const open = pop.hidden; closeAllDD(); pop.hidden = !open; if (open) { q.value = ""; fill(); q.focus(); } };
+  pop.onclick = e => e.stopPropagation();
+  q.oninput = fill;
+  host.querySelector(".dd-clear").onclick = () => { state.sel[dim].clear(); state.page = 0; render(); };
+  host.querySelector(".dd-close").onclick = closeAllDD;
+  host._update = () => {
+    const n = state.sel[dim].size;
+    btn.innerHTML = `${DIMS[dim].label}${n ? ` <b>${n}</b>` : ""} ▾`;
+    btn.classList.toggle("on", !!n);
+    if (!pop.hidden) fill();
+  };
+});
+
+/* ---------- wiring ---------- */
+let qTimer;
+$("#q").addEventListener("input", e => { clearTimeout(qTimer); qTimer = setTimeout(() => { state.q = e.target.value.trim().toLowerCase().split(/\s+/).filter(Boolean); state.page = 0; render(); }, 160); });
+[["from", "from"], ["to", "to"]].forEach(([id, k]) => $("#" + id).addEventListener("change", e => { state[k] = e.target.value; state.page = 0; render(); }));
+[["pmin", "pmin"], ["pmax", "pmax"]].forEach(([id, k]) => $("#" + id).addEventListener("change", e => { state[k] = e.target.value === "" ? null : +e.target.value; state.page = 0; render(); }));
+$("#reset").onclick = () => {
+  Object.values(state.sel).forEach(s => s.clear());
+  Object.assign(state, {q:[], from:"", to:"", pmin:null, pmax:null, page:0});
+  ["q", "from", "to", "pmin", "pmax"].forEach(id => $("#" + id).value = "");
+  if (homeView) homeView();
+  render();
+};
+function seg(id, key, cb) {
+  $(id).querySelectorAll("button").forEach(b => b.onclick = () => {
+    state[key] = b.dataset.v; $(id).querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b)); cb();
+  });
+}
+$("#dim").innerHTML = ["street", "rooms", "nature", "age", "year", "quarter", "price", "size", "parcel"]
+  .map(k => `<button data-v="${k}" class="${k === state.dim ? "on" : ""}">${DIMS[k].label}</button>`).join("");
+seg("#gran", "gran", () => renderTime(filtered()));
+seg("#metric", "metric", () => renderTime(filtered()));
+seg("#dim", "dim", () => { state.bsort = {k:null, dir:-1}; renderBreak(filtered()); });
+$("#csv").onclick = () => {
+  const f = sortRows(filtered(), COLS.find(c => c.k === state.sort.k).v, state.sort.dir);
+  const H = ["תאריך", "כתובות", "רחוב", "מקור שיוך רחוב", "גוש", "חלקה", "תת חלקה", "סוג", "חדרים", "שטח מ״ר", "מחיר", "₪/מ״ר מנורמל", "חלק נמכר", "שנת בנייה", "יישוב"];
+  const q = v => { const s = String(v ?? ""); return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
+  const lines = [H.join(",")].concat(f.map(d => [d.date, (d.addresses || []).join(" | "), d.street, d.street_src, d.gush, d.helka, d.sub, d.nature, d.rooms, d.area, d.amount, d.ppsqm, d.portion, d.yb, d.settlement].map(q).join(",")));
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob(["\ufeff" + lines.join("\n")], {type:"text/csv;charset=utf-8"}));
+  a.download = (M.title || "deals").replace(/[^\w\u0590-\u05FF]+/g, "-") + ".csv";
+  document.body.appendChild(a); a.click(); a.remove();
+};
+window.addEventListener("resize", () => { Object.values(charts).forEach(c => c.resize()); if (map) map.invalidateSize(); });
+
+/* ---------- header + footer ---------- */
+$("#title").textContent = M.title;
+$("#pchips").innerHTML = (M.chips || []).map(c => `<span>${esc(c)}</span>`).join("");
+const A = M.area;
+$("#metaline").innerHTML = [
+  `נוצר ${esc(M.generated)}`,
+  A.mode !== "settlement" ? `${nf.format(A.n_parcels)} חלקות · גושים ${esc((A.gushim || []).slice(0, 8).join(", "))}${(A.gushim || []).length > 8 ? "…" : ""}` : "",
+  M.settlement_last_deal ? `עסקה אחרונה במאגר ב${esc(M.settlement)}: ${dfmt(M.settlement_last_deal)}` : "",
+].filter(Boolean).map(s => `<span>${s}</span>`).join("");
+if (!rows.length) document.querySelector(".grid").insertAdjacentHTML("afterbegin", '<div class="card span2"><div class="empty" style="height:120px">לא נמצאו עסקאות לפי הפרמטרים שנבחרו.</div></div>');
+$("#about").innerHTML = `<h3>מתודולוגיה, מקורות והסתייגויות</h3><ul>
+  <li><b>מקור:</b> מאגר עסקאות המקרקעין של רשות המסים (מיסוי מקרקעין), כפי שנשמר ב<a href="https://www.over.org.il/projects/deals" target="_blank" rel="noopener">גרסאות לעם</a>${M.register.versions_url ? ` (<a href="${esc(M.register.versions_url)}" target="_blank" rel="noopener">היסטוריית גרסאות</a>)` : ""}. שורות מקור שלא עובדו. המחיר הוא <b>השווי המדווח</b> לרשות המסים ולא מחיר שוק מאומת.${M.register.last_deal ? ` העסקה האחרונה במאגר כולו: ${dfmt(M.register.last_deal)}; דיווחים מגיעים באיחור של שבועות.` : ""}</li>
+  <li><b>הגדרת האזור:</b> ${esc(A.src || "")}. הגבול אינדיקטיבי. חלקה נכללת לפי מיקומה, ועסקאות מקושרות לפי גוש וחלקה בלבד.</li>
+  <li><b>סינון במקור:</b> ${esc((M.chips || []).slice(1).join(" · "))}. הסינונים שבראש הדוח פועלים רק על העסקאות שנשלפו.</li>
+  <li><b>סטטיסטיקה:</b> כל הערכים הם <b>חציונים</b>, כי שורה אחת יכולה להיות דירה או בניין שלם. ₪/מ״ר מנורמל = שווי ÷ (שטח × חלק נמכר). השטח הוא שטח הנכס כולו.</li>
+  <li><b>שיוך רחוב:</b> לפי גזטיר הנכסים ברמת תת-החלקה, ואם אין אז לפי הכתובות המקושרות לחלקה (נדל״ן לעם). ≈ מסמן רחוב משוער לפי הכתובת הקרובה (עד 150 מ׳).</li>
+  <li><b>חדשה / יד שנייה</b> מוסקת משנת הבנייה מול שנת העסקה (עד שנה = חדשה), ולא ממעמד המוכר.</li>
+  ${M.notes && M.notes.length ? `<li class="notes"><b>הערות שליפה:</b> ${M.notes.map(esc).join(" · ")}</li>` : ""}
+  ${M.row_urls && M.row_urls.length ? `<li><b>אימות:</b> ${M.row_urls.map((u, i) => `<a href="${esc(u)}" target="_blank" rel="noopener">שאילתה ${i + 1}</a>`).join(" · ")} (קונסולת /data)</li>` : ""}
+</ul>`;
+
+/* ---------- render ---------- */
+function render() {
+  const f = filtered();
+  $("#count").innerHTML = `מציג <b>${nf.format(f.length)}</b> מתוך ${nf.format(rows.length)} עסקאות`;
+  document.querySelectorAll(".dd").forEach(h => h._update && h._update());
+  renderActiveChips(); renderKPIs(f); renderTime(f);
+  renderPie("nature", "c-nature"); renderPie("rooms", "c-rooms"); renderPie("age", "c-age");
+  renderStreet(); renderScatter(f); renderHist(); renderBench(f); renderMap(f);
+  renderBreak(f); renderTable(f); renderStreets();
+}
+if (!window.echarts) document.querySelectorAll(".chart").forEach(e => e.innerHTML = '<div class="empty">ספריית הגרפים לא נטענה (נדרש חיבור לאינטרנט)</div>');
+initMap();
+render();
+})();
+</script>
+</body>
+</html>

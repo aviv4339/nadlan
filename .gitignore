@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# Generated reports and data dumps (public data, but not source)
+nadlan-report-*.html
+*.report.json
+
+# Credentials must never be committed (the client stores them in ~/.config/over-mcp/)
+state.json
+.env
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/
