@@ -91,6 +91,13 @@ Symlinking (as below) keeps every agent on the latest version after a `git pull`
 | **Hermes Agent** | `mkdir -p ~/.hermes/skills && cp -R "$SKILL" ~/.hermes/skills/` | | just ask, or `/over-nadlan-deals` |
 | **OpenClaw** | `openclaw skills install "$SKILL" --global` | `openclaw skills install "$SKILL"` | just ask, or type `$` in the Control UI |
 
+**Or install in one command with the [skills CLI](https://github.com/vercel-labs/skills)** (Node.js required). This works for Claude Code, pi, OpenClaw and Hermes. For Codex, use the table above:
+
+```bash
+npx skills add aviv4339/nadlan -g -a claude-code -a pi -a openclaw -a hermes-agent
+python3 ~/.claude/skills/over-nadlan-deals/scripts/over_mcp.py login   # once, from any installed copy
+```
+
 Start a new session afterwards, since most agents only scan for skills at startup. Then ask:
 
 > *תן לי דוח על דירות של 5 חדרים ומעלה במחיר מעל 3,500,000 בשכונת רמת אביב ג׳, תל אביב, מ-2024 ועד היום*

@@ -86,5 +86,14 @@ class RestoreRooms(unittest.TestCase):
         self.assertNotIn("'57'", seen[0])  # rows that already have rooms are not looked up
 
 
+class NetworkErrors(unittest.TestCase):
+    def test_timeouts_surface_as_mcp_error_not_traceback(self):
+        import over_mcp
+        with mock.patch.object(over_mcp.urllib.request, "urlopen", side_effect=TimeoutError("The read operation timed out")):
+            with self.assertRaises(over_mcp.McpError) as ctx:
+                over_mcp.post("https://www.over.org.il/deals/mcp", {})
+        self.assertIn("timed out", str(ctx.exception))
+
+
 if __name__ == "__main__":
     unittest.main()

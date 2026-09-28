@@ -45,6 +45,8 @@ def post(url, data, headers=None, form=False, timeout=240):
             return r.status, dict(r.headers), r.read().decode()
     except urllib.error.HTTPError as e:
         return e.code, dict(e.headers), e.read().decode()
+    except OSError as e:  # URLError, socket timeouts, connection resets (HTTPError is handled above)
+        raise McpError(f"network error calling {url}: {e} (over.org.il can be slow; retry in a minute)") from e
 
 
 def store_tokens(st, tok):
