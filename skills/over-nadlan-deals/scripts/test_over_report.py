@@ -113,5 +113,20 @@ class OutputNaming(unittest.TestCase):
             self.assertEqual(over_report.report_path("haifa", "2026-09-28", root=tmp).name, "haifa-2026-09-28-2.html")
 
 
+class Versioning(unittest.TestCase):
+    def test_version_sources_agree(self):
+        import pathlib
+        import re
+        import over_mcp
+        skill = pathlib.Path(over_mcp.__file__).resolve().parents[1]
+        front = (skill / "SKILL.md").read_text(encoding="utf-8").split("---")[1]
+        self.assertRegex(over_mcp.__version__, r"^\d+\.\d+\.\d+$")
+        self.assertIn(f'version: "{over_mcp.__version__}"', front)
+        changelog = skill.parents[1] / "CHANGELOG.md"  # absent when only the skill folder is installed
+        if changelog.exists():
+            released = re.findall(r"^## \[(\d+\.\d+\.\d+)\]", changelog.read_text(encoding="utf-8"), re.M)
+            self.assertEqual(released[0], over_mcp.__version__, "latest CHANGELOG entry must match __version__")
+
+
 if __name__ == "__main__":
     unittest.main()

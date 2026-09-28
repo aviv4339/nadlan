@@ -21,7 +21,7 @@ import urllib.request, webbrowser
 HERE = pathlib.Path(__file__).resolve().parent
 sys.dont_write_bytecode = True  # keep the skill directory free of __pycache__
 sys.path.insert(0, str(HERE))
-from over_mcp import McpError, call_tool  # noqa: E402
+from over_mcp import McpError, __version__, call_tool  # noqa: E402
 
 VENDOR = pathlib.Path.home() / ".config" / "over-mcp" / "vendor"
 LIBS = {
@@ -663,7 +663,7 @@ def build(a):
     payload = {
         "meta": {
             "title": a.title or f"עסקאות נדל״ן — {label}",
-            "generated": dt.datetime.now().strftime("%Y-%m-%d %H:%M"), "today": today,
+            "generated": dt.datetime.now().strftime("%Y-%m-%d %H:%M"), "today": today, "generator": f"nadlan {__version__}",
             "settlement": settlement, "settlement_last_deal": S.get("last_deal"),
             "area": area, "filters": filters, "natures": a.nature, "chips": chips(a, label),
             "register": {"last_deal": reg.get("last_deal"), "deals": reg.get("deals"),
@@ -695,6 +695,7 @@ def build(a):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--version", action="version", version=f"nadlan {__version__}")
     sp = ap.add_subparsers(dest="cmd", required=True)
     ar = sp.add_parser("areas")
     ar.add_argument("--city", required=True)

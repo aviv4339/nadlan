@@ -878,7 +878,7 @@ $("#title").textContent = M.title;
 $("#pchips").innerHTML = (M.chips || []).map(c => `<span>${esc(c)}</span>`).join("");
 const A = M.area;
 $("#metaline").innerHTML = [
-  `נוצר ${esc(M.generated)}`,
+  `נוצר ${esc(M.generated)}${M.generator ? ` · ${esc(M.generator)}` : ""}`,
   A.mode !== "settlement" ? `${nf.format(A.n_parcels)} חלקות · גושים ${esc((A.gushim || []).slice(0, 8).join(", "))}${(A.gushim || []).length > 8 ? "…" : ""}` : "",
   M.settlement_last_deal ? `עסקה אחרונה במאגר ב${esc(M.settlement)}: ${dfmt(M.settlement_last_deal)}` : "",
 ].filter(Boolean).map(s => `<span>${s}</span>`).join("");

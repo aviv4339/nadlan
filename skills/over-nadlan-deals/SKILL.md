@@ -1,6 +1,9 @@
 ---
 name: over-nadlan-deals
 description: "Query Israeli real-estate transactions (Tax Authority / מיסוי מקרקעין register, 3.8M deals since 1998) via the over.org.il MCP servers, and generate beautiful interactive HTML reports (filters, charts, gush/helka parcel map with each purchased apartment) for a neighborhood, streets, parcels or whole city from a natural-language request."
+license: MIT
+metadata:
+  version: "0.2.0"
 ---
 
 # Israeli real-estate deals — over.org.il MCP + interactive reports

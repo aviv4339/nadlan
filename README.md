@@ -10,6 +10,8 @@ Query the Israel Tax Authority's register of **3.8 million reported real-estate 
 ![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-3776AB.svg)
 ![Dependencies: none](https://img.shields.io/badge/dependencies-stdlib%20only-success.svg)
 ![Agent Skill](https://img.shields.io/badge/agent-skill-8A2BE2.svg)
+[![Release](https://img.shields.io/github/v/release/aviv4339/nadlan?sort=semver)](https://github.com/aviv4339/nadlan/releases)
+[![Changelog](https://img.shields.io/badge/changelog-keep%20a%20changelog-E05735.svg)](CHANGELOG.md)
 
 <img src="docs/images/report-overview.jpg" alt="Interactive report: header, filters, KPIs and parcel map" width="100%">
 
@@ -28,7 +30,7 @@ Query the Israel Tax Authority's register of **3.8 million reported real-estate 
 - [How it works](#how-it-works)
 - [Privacy & security](#privacy--security)
 - [Data caveats](#data-caveats)
-- [Development](#development)
+- [Development](#development) · [Versioning & changelog](#versioning--changelog)
 - [Credits & license](#credits--license)
 - [בעברית](#בעברית)
 
@@ -378,6 +380,23 @@ skills/over-nadlan-deals/
 ```
 
 Issues and pull requests are welcome.
+
+### Versioning & changelog
+
+nadlan uses [Semantic Versioning](https://semver.org), and every release is listed in [CHANGELOG.md](CHANGELOG.md). Check which version you have with:
+
+```bash
+python3 skills/over-nadlan-deals/scripts/over_report.py --version   # nadlan 0.2.0
+```
+
+Every report also shows the version that generated it in its header.
+
+To cut a release:
+
+1. Set the new version in both places: `__version__` in `scripts/over_mcp.py` and `metadata.version` in `SKILL.md`.
+2. Move the `[Unreleased]` notes in `CHANGELOG.md` under the new version and date, and update the compare links.
+3. Run the tests. `test_version_sources_agree` fails if the three disagree.
+4. Commit, tag `vX.Y.Z`, push with `--tags`, and publish the GitHub release from the changelog section.
 
 ## Credits & license
 

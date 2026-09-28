@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Minimal client for the over.org.il MCP servers (deals, nadlan, data, ...).
 
+  over_mcp.py --version
   over_mcp.py login                      # one-time Google OAuth in the browser
   over_mcp.py tools  <server>            # list tools + input schemas
   over_mcp.py call   <server> <tool> ['<json args>']
@@ -12,6 +13,8 @@ both raise McpError. Thread-safe (token refresh is serialized).
 """
 import base64, hashlib, http.server, json, os, pathlib, secrets, sys, threading, time
 import urllib.error, urllib.parse, urllib.request, webbrowser
+
+__version__ = "0.2.0"  # Semantic Versioning; keep SKILL.md metadata.version and CHANGELOG.md in sync
 
 BASE = "https://www.over.org.il"
 AUTH = BASE + "/mcp/oauth"
@@ -166,6 +169,8 @@ def call_tool(server, tool, args):
 def main():
     a = sys.argv[1:]
     try:
+        if a[:1] in (["--version"], ["-V"]):
+            return print(f"nadlan {__version__}")
         if a[:1] == ["login"]:
             return login()
         if len(a) >= 2 and a[0] == "tools":
